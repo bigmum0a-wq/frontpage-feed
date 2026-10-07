@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="FrontPage - Your personal content reader.">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="stylesheet" href="assets/css/tokens.css">
+    <link rel="stylesheet" href="assets/css/tailwind.output.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <title>FrontPage</title>
+</head>
+
+<body>
+
+    <!-- =========================================================
+         APPLICATION
+    ========================================================== -->
+
+    <div id="app">
+
+        <!-- =====================================================
+             GLOBAL HEADER
+        ====================================================== -->
+
+        <header class="app-header">
+
+            <!-- Logo + Main navigation -->
+            <div class="header-primary">
+
+                <div class="page-logo">
+                    <a href="#welcome" aria-label="FrontPage home">
+                        <img
+                            src="assets/icons/fontpage-logo.svg"
+                            alt="FrontPage Logo"
+                            class="logo"
+                        >
+                        <span class="logo-text">FrontPage</span>
+                    </a>
+                </div>
+
+                <nav class="main-navigation" aria-label="Main navigation">
+                    <ul>
+                        <li>
+                            <a href="#feed" data-view="feed">
+                                Feed
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#digest" data-view="digest">
+                                Digest
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#discover" data-view="discover">
+                                Discover
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#analytics" data-view="analytics">
+                                Analytics
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+            </div>
+
+            <!-- Search + Add + Profile -->
+            <div class="header-actions">
+
+                <div class="global-search">
+                    <input
+                        type="search"
+                        class="search-bar"
+                        placeholder="Search articles..."
+                        aria-label="Search articles"
+                    >
+                </div>
+
+                    <button
+                        type="button"
+                        class="add"
+                        aria-label="Add feed"
+                    >
+                        +
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary btn-sm btn-header-auth"
+                        id="btn-header-auth"
+                    >
+                        Sign In
+                    </button>
+
+                    <button
+                        type="button"
+                        class="user-profile"
+                        aria-label="Open user profile"
+                    >
+                        <span id="user-name">Guest</span>
+                    </button>
+
+            </div>
+
+        </header>
+
+        <!-- =====================================================
+             SUB-HEADER PERSISTENT TICKER (Non lus & Quick Actions)
+        ====================================================== -->
+        <div id="sub-header-ticker" class="sub-header-ticker" role="region" aria-label="État de lecture des articles">
+            <div class="ticker-left">
+                <span class="pulsing-live-dot" id="ticker-live-dot" aria-hidden="true"></span>
+                <span class="ticker-status-text" id="ticker-status-text">
+                    <strong id="ticker-unread-count">0</strong> articles non lus
+                </span>
+                <span class="ticker-divider" aria-hidden="true">·</span>
+                <a href="#feed" class="ticker-link" id="ticker-view-feed-link">Voir les flux</a>
+            </div>
+            <div class="ticker-right">
+                <button type="button" class="ticker-btn-mark-all" id="ticker-mark-all-btn" title="Marquer tous les articles comme lus">
+                    ✓ Tout marquer comme lu
+                </button>
+            </div>
+        </div>
+
+
+        <aside class="app-sidebar" aria-label="Application sidebar">
+
+            <!-- Mobile collapsible toggle (visible only on mobile) -->
+            <button
+                type="button"
+                class="sidebar-mobile-toggle"
+                id="sidebar-mobile-toggle"
+                aria-expanded="false"
+                aria-label="Toggle navigation and sources menu"
+            >
+                <span class="toggle-label-wrap">
+                    <span class="toggle-icon-folder">📁</span>
+                    <span id="sidebar-mobile-title">Feeds &amp; Sections</span>
+                </span>
+                <span class="toggle-caret" aria-hidden="true">▼</span>
+            </button>
+
+            <div class="sidebar-content">
+
+                <!-- The content changes according to the active view -->
+                <nav id="sidebar-navigation">
+                    <!-- Sidebar structure will be injected here -->
+                </nav>
+
+                <!-- Settings stays at the bottom -->
+                <div class="sidebar-footer">
+
+                    <a href="#settings" id="settings-link">
+                        Settings
+                    </a>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =====================================================
+             MAIN APPLICATION AREA
+        ====================================================== -->
+
+        <main id="main-content">
+
+            <!--
+                One of the three view templates will be inserted here.
+
+                Feed
+                Digest
+                Discover
+            -->
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================================
+         FEED TEMPLATE
+    ========================================================== -->
+
+    <template id="feed-template">
+
+        <section
+            id="feed-view"
+            class="view feed-view"
+            aria-labelledby="feed-title"
+        >
+
+            <!-- Optional Guest Onboarding Banner -->
+            <div id="feed-guest-banner" class="feed-guest-banner" hidden>
+                <div class="guest-banner-content">
+                    <span class="guest-banner-icon">💡</span>
+                    <div class="guest-banner-text">
+                        <strong>Browsing in Guest Mode</strong>
+                        <span>Your feeds and bookmarks are stored locally. Create a free account to sync across devices.</span>
+                    </div>
+                </div>
+                <div class="guest-banner-actions">
+                    <button type="button" class="btn btn-primary btn-xs btn-guest-banner-signup">Sign In / Register</button>
+                    <button type="button" class="btn btn-ghost btn-xs btn-guest-banner-dismiss" aria-label="Dismiss banner">✕</button>
+                </div>
+            </div>
+
+            <!-- Feed header -->
+            <header class="main-header">
+
+                <div class="main-header-info">
+
+                    <h1 id="feed-title">
+                        <!-- Current feed/category name -->
+                    </h1>
+
+                    <span
+                        id="feed-unread-count"
+                        class="unread-count"
+                    >
+                        <!-- unread count -->
+                    </span>
+
+                </div>
+
+
+                <div class="main-header-actions">
+
+                    <!-- List / Grid -->
+                    <div class="list-actions">
+
+                        <button
+                            type="button"
+                            id="list-view"
+                            aria-label="List view"
+                        >
+                            <img src="assets/icons/list-icon.svg" alt="" aria-hidden="true">
+                        </button>
+
+                        <button
+                            type="button"
+                            id="grid-view"
+                            aria-label="Grid view"
+                        >
+                            <img src="assets/icons/grid-icon.svg" alt="" aria-hidden="true">
+                        </button>
+
+                    </div>
+
+
+                    <!-- Sorting -->
+                    <button
+                        type="button"
+                        id="newest"
+                    >
+                        <img src="assets/icons/New-list-icon.svg" alt="" aria-hidden="true">
+                        <span>Newest</span>
+                    </button>
+
+
+                    <!-- Refresh -->
+                    <button
+                        type="button"
+                        id="refresh"
+                    >
+                        <img src="assets/icons/refresh-icon.svg" alt="" aria-hidden="true">
+                        <span>Refresh</span>
+                    </button>
+
+
+                    <!-- Mark everything read -->
+                    <button
+                        type="button"
+                        id="mark-all-read"
+                    >
+                        <img src="assets/icons/mark-all-read-icon.svg" alt="" aria-hidden="true">
+                        <span>Mark all as read</span>
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <!-- Feed content -->
+            <div class="main-content">
+
+                <div
+                    id="feed-new-items"
+                    class="new-items-count"
+                >
+                    <!-- new items since last visit -->
+                </div>
+
+                <!-- 🔍 Semantic Search Intent Bar -->
+                <div id="search-intent-bar" class="search-intent-bar" hidden></div>
+
+                <!-- Articles injected here -->
+                <div
+                    id="feed-articles"
+                    class="articles-list"
+                >
+                </div>
+
+            </div>
+
+        </section>
+
+    </template>
+
+
+    <!-- =========================================================
+         PROFILE TEMPLATE
+    ========================================================== -->
+
+    <template id="profile-template">
+        <section id="profile-view" class="view profile-view" aria-labelledby="profile-name">
+            <header class="profile-header">
+                <div id="profile-avatar" class="profile-avatar">J</div>
+                <div class="profile-identity">
+                    <div class="profile-title-row">
+                        <h1 id="profile-name">User</h1>
+                        <span id="profile-status-badge" class="profile-status-badge">Guest Session</span>
+                    </div>
+                    <p id="profile-handle" class="profile-handle">@user</p>
+                    <p id="profile-email" class="profile-email-desc">guest@frontpage.local</p>
+                </div>
+                <div class="profile-header-actions">
+                    <button type="button" id="profile-auth-action-btn" class="btn btn-sm btn-primary">Sign In</button>
+                    <button type="button" id="profile-edit-name-btn" class="btn btn-sm btn-secondary">Edit Name</button>
+                    <a href="#settings" class="btn btn-sm btn-ghost">Settings</a>
+                </div>
+            </header>
+
+            <!-- Sync & Cloud Card -->
+            <section class="profile-card profile-cloud-status" aria-labelledby="profile-cloud-title">
+                <div class="profile-section-heading">
+                    <div>
+                        <h2 id="profile-cloud-title">Cloud Sync &amp; Storage</h2>
+                        <p id="profile-cloud-desc">Your subscriptions and reading streaks are currently saved locally.</p>
+                    </div>
+                    <div id="profile-cloud-cta-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="profile-stats" aria-label="Reading statistics">
+                <article><strong id="profile-feed-count">0</strong><span>feeds</span></article>
+                <article><strong id="profile-saved-count">0</strong><span>saved</span></article>
+                <article><strong id="profile-week-count">0</strong><span>read this week</span></article>
+                <article><strong id="profile-month-count">0</strong><span>read this month</span></article>
+            </section>
+
+            <!-- Reading Activity Heatmap -->
+            <section id="reading-activity" class="profile-card" aria-labelledby="reading-activity-title">
+                <div class="profile-section-heading">
+                    <div><h2 id="reading-activity-title">Reading activity</h2><p id="profile-activity-total"></p></div>
+                    <span><strong id="profile-total-count">0</strong> total reads</span>
+                </div>
+                <div id="reading-activity-grid" class="reading-activity-grid" aria-label="Reading activity for the last 12 weeks"></div>
+                <div class="activity-legend"><span>Less</span><i class="activity-level-0"></i><i class="activity-level-1"></i><i class="activity-level-2"></i><i class="activity-level-3"></i><i class="activity-level-4"></i><span>More</span></div>
+            </section>
+
+            <!-- Saved Articles (Bookmarks Library) -->
+            <section class="profile-card profile-bookmarks-card" aria-labelledby="profile-library-title">
+                <div class="profile-section-heading">
+                    <div>
+                        <h2 id="profile-library-title">Your saved articles</h2>
+                        <p id="profile-library-subtitle">Articles you have bookmarked for later reading.</p>
+                    </div>
+                    <a href="#feed" class="btn-link-subtle">Explore more feeds →</a>
+                </div>
+                <div id="profile-saved-articles-list" class="profile-saved-articles-list">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </section>
+    </template>
+
+    <!-- =========================================================
+         SETTINGS TEMPLATE
+    ========================================================== -->
+
+    <template id="settings-template">
+        <section id="settings-view" class="view settings-view" aria-labelledby="settings-title">
+            <header class="settings-header">
+                <div class="settings-header-content">
+                    <span class="section-label">Preferences</span>
+                    <h1 id="settings-title">Settings</h1>
+                    <p>Customize your reading experience, feeds, AI features, and integrations.</p>
+                </div>
+                <div class="settings-header-actions">
+                    <button type="button" id="settings-reset-btn" class="settings-btn-secondary">Reset</button>
+                    <button type="submit" form="settings-form" class="settings-btn-primary">Save changes</button>
+                </div>
+            </header>
+
+            <form id="settings-form" class="settings-form">
+                <div class="settings-spa-container">
+                    <div class="settings-panels">
+
+                        <!-- 1. APPEARANCE & INTERFACE -->
+                        <section id="panel-appearance" class="settings-panel is-active" aria-labelledby="settings-title">
+                            <div class="panel-header">
+                                <h2>Appearance &amp; UI</h2>
+                                <p>Adjust the design, accent colors, and typography for a comfortable reading experience.</p>
+                            </div>
+
+                            <!-- Thème -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Theme</h3>
+                                    <p>Choose light, dark, or a theme that follows your operating system.</p>
+                                </div>
+                                <div class="theme-picker-grid">
+                                    <label class="theme-card">
+                                        <input type="radio" name="theme" value="system" checked>
+                                        <div class="theme-card-preview theme-preview-system">
+                                            <div class="theme-preview-split-left"></div>
+                                            <div class="theme-preview-split-right"></div>
+                                        </div>
+                                        <span class="theme-card-label">System</span>
+                                    </label>
+
+                                    <label class="theme-card">
+                                        <input type="radio" name="theme" value="light">
+                                        <div class="theme-card-preview theme-preview-light">
+                                            <div class="theme-preview-bar"></div>
+                                            <div class="theme-preview-line"></div>
+                                        </div>
+                                        <span class="theme-card-label">Light</span>
+                                    </label>
+
+                                    <label class="theme-card">
+                                        <input type="radio" name="theme" value="dark">
+                                        <div class="theme-card-preview theme-preview-dark">
+                                            <div class="theme-preview-bar"></div>
+                                            <div class="theme-preview-line"></div>
+                                        </div>
+                                        <span class="theme-card-label">Dark</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Couleur d'accent -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Accent color</h3>
+                                    <p>Customize the color used by buttons, indicators, and links.</p>
+                                </div>
+                                <div class="accent-palette-grid" id="accent-palette-container">
+                                    <!-- Pastilles injectées dynamiquement en JS -->
+                                </div>
+                            </div>
+
+                            <!-- Disposition et Densité -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Feed layout &amp; density</h3>
+                                    <p>Set the default presentation of articles in your dashboard.</p>
+                                </div>
+                                <div class="settings-grid-fields">
+                                    <label class="settings-field">
+                                        <span>Default layout</span>
+                                        <select id="settings-feed-layout">
+                                            <option value="list">Detailed list</option>
+                                            <option value="grid">Card grid</option>
+                                            <option value="magazine">Magazine</option>
+                                            <option value="split">Split pane</option>
+                                        </select>
+                                    </label>
+
+                                    <label class="settings-field">
+                                        <span>Display density</span>
+                                        <select id="settings-density">
+                                            <option value="comfortable">Comfortable</option>
+                                            <option value="compact">Compact</option>
+                                            <option value="dense">Dense</option>
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Typographie & Confort de lecture -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Typography &amp; reading comfort</h3>
+                                    <p>Adjust fonts and spacing for the article Reader.</p>
+                                </div>
+                                <div class="settings-grid-fields">
+                                    <label class="settings-field">
+                                        <span>Reader font</span>
+                                        <select id="settings-reader-font">
+                                            <option value="serif">Georgia / Charter (traditional serif)</option>
+                                            <option value="sans">Inter (modern sans-serif)</option>
+                                            <option value="mono">JetBrains Mono (technical monospace)</option>
+                                            <option value="opendyslexic">OpenDyslexic (reading support)</option>
+                                        </select>
+                                    </label>
+
+                                    <label class="settings-field">
+                                        <span>Text size</span>
+                                        <select id="settings-text-size">
+                                            <option value="small">Small (14px)</option>
+                                            <option value="normal">Normal (16px)</option>
+                                            <option value="large">Large (18px)</option>
+                                            <option value="xlarge">Extra large (20px)</option>
+                                        </select>
+                                    </label>
+
+                                    <label class="settings-field">
+                                        <span>Line height</span>
+                                        <select id="settings-line-height">
+                                            <option value="tight">Tight (1.3)</option>
+                                            <option value="normal">Standard (1.5)</option>
+                                            <option value="loose">Relaxed (1.8)</option>
+                                        </select>
+                                    </label>
+
+                                    <label class="settings-field">
+                                        <span>Maximum column width</span>
+                                        <select id="settings-column-width">
+                                            <option value="narrow">Narrow (38rem / 600px)</option>
+                                            <option value="medium">Medium (45rem / 720px)</option>
+                                            <option value="wide">Wide (54rem / 860px)</option>
+                                        </select>
+                                    </label>
+                                </div>
+
+                                <!-- Bloc d'aperçu dynamique du Reader -->
+                                <div class="reader-preview-wrapper">
+                                    <div class="reader-preview-header">
+                                        <span class="preview-badge">Live Reader preview</span>
+                                    </div>
+                                    <div id="reader-preview-box" class="reader-preview-box">
+                                        <h4 class="preview-title">The art of distraction-free digital reading</h4>
+                                        <p class="preview-meta">Frontpage Engineering · 3 min read</p>
+                                        <p class="preview-body">
+                                            A modern feed reader should fade away so the text can take center stage. Balanced line height, typography, and contrast make long reading sessions easier on the eyes.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <!-- 2. FEEDS & SYNCHRONIZATION -->
+                        <section id="panel-sync" class="settings-panel" aria-labelledby="settings-title" hidden>
+                            <div class="panel-header">
+                                <h2>Feeds &amp; synchronization</h2>
+                                <p>Control feed refresh cycles and reading behavior.</p>
+                            </div>
+
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Refresh frequency</h3>
+                                    <p>Choose how often the app checks for new articles.</p>
+                                </div>
+                                <div class="settings-grid-fields">
+                                    <label class="settings-field">
+                                        <span>Automatic interval</span>
+                                        <select id="settings-refresh">
+                                            <option value="manual">Manual only</option>
+                                            <option value="15">Every 15 minutes</option>
+                                            <option value="30">Every 30 minutes</option>
+                                            <option value="60">Every hour</option>
+                                        </select>
+                                    </label>
+                                </div>
+
+                                <div class="toggle-row">
+                                    <div class="toggle-info">
+                                        <strong>Refresh on Wi-Fi only</strong>
+                                        <span>Reduce data usage on metered or shared connections.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-wifi-only">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Reading behavior</h3>
+                                    <p>Choose when articles are marked as read.</p>
+                                </div>
+                                <div class="settings-grid-fields">
+                                    <label class="settings-field">
+                                        <span>Mark as read</span>
+                                        <select id="settings-mark-read">
+                                            <option value="open">When an article opens</option>
+                                            <option value="scroll">While scrolling the article</option>
+                                        </select>
+                                    </label>
+                                </div>
+
+                                <div class="toggle-row">
+                                    <div class="toggle-info">
+                                        <strong>Emphasize unread articles</strong>
+                                        <span>Show a stronger visual treatment for fresh content.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-unread" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Duplicates &amp; automatic cleanup</h3>
+                                    <p>Keep your article library lightweight and avoid repeated stories.</p>
+                                </div>
+
+                                <div class="toggle-row">
+                                    <div class="toggle-info">
+                                        <strong>Smart duplicate filtering</strong>
+                                        <span>Detect and group stories syndicated by multiple sources.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-filter-duplicates" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="settings-grid-fields" style="margin-top: var(--space-4);">
+                                    <label class="settings-field">
+                                        <span>Remove read articles after</span>
+                                        <select id="settings-auto-purge">
+                                            <option value="7">7 days</option>
+                                            <option value="30" selected>30 days</option>
+                                            <option value="90">90 days</option>
+                                            <option value="never">Never (keep archive)</option>
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <!-- 3. IMPORT, EXPORT & DONNÉES -->
+                        <section id="panel-data" class="settings-panel" aria-labelledby="settings-title" hidden>
+                            <div class="panel-header">
+                                <h2>Import, export &amp; data</h2>
+                                <p>Manage OPML subscriptions and browser storage.</p>
+                            </div>
+
+                            <!-- OPML Section -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>OPML standard (RSS subscriptions)</h3>
+                                    <p>Move your feed library to or from other readers such as NetNewsWire, Feedly, or Inoreader.</p>
+                                </div>
+
+                                <div class="opml-actions-grid">
+                                    <!-- Import -->
+                                    <div class="opml-action-box">
+                                        <div class="opml-icon">📥</div>
+                                        <h4>Import an OPML file</h4>
+                                        <p>Add all feeds from an OPML or XML file.</p>
+                                        <label class="btn-file-upload">
+                                            <span>Choose an OPML file</span>
+                                            <input type="file" id="opml-file-input" accept=".opml,.xml" hidden>
+                                        </label>
+                                        <span id="opml-import-status" class="file-status-text"></span>
+                                    </div>
+
+                                    <!-- Export -->
+                                    <div class="opml-action-box">
+                                        <div class="opml-icon">📤</div>
+                                        <h4>Export feeds as OPML</h4>
+                                        <p>Generate a standard archive containing all subscriptions and folders.</p>
+                                        <button type="button" id="opml-export-btn" class="settings-btn-secondary" style="width: 100%;">
+                                            Download sample-feeds.opml
+                                        </button>
+                                        <span class="file-status-text">OPML 2.0 format compatible with all readers.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Local Storage & Offline Cache -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Local Storage &amp; Offline Cache</h3>
+                                    <p>Cached articles, temporary images, and data stored in your browser.</p>
+                                </div>
+
+                                <div class="storage-meter-box">
+                                    <div class="storage-labels">
+                                        <span>Currently used storage</span>
+                                        <strong id="storage-usage-text">Calculating...</strong>
+                                    </div>
+                                    <div class="storage-bar-track">
+                                        <div id="storage-bar-fill" class="storage-bar-fill" style="width: 15%;"></div>
+                                    </div>
+                                    <span class="storage-caption">Recommended maximum per domain: ~5 MB in localStorage.</span>
+                                </div>
+
+                                <div class="danger-zone">
+                                    <div class="danger-item">
+                                        <div>
+                                            <strong>Clear articles cache</strong>
+                                            <p>Removes locally cached articles without modifying your subscribed feeds.</p>
+                                        </div>
+                                        <button type="button" id="clear-cache-btn" class="btn-warning">Clear cache</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <!-- 4. THIRD-PARTY INTEGRATIONS & SERVICES -->
+                        <section id="panel-integrations" class="settings-panel" aria-labelledby="settings-title" hidden>
+                            <div class="panel-header">
+                                <h2>Third-Party Integrations &amp; Services</h2>
+                                <p>Connect your read-it-later services and configure quick-sharing shortcuts.</p>
+                            </div>
+
+                            <!-- Read-it-Later -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>"Read-it-Later" Services</h3>
+                                    <p>Save any article in one click to your favorite read-it-later app.</p>
+                                </div>
+
+                                <div class="integrations-list">
+                                    <div class="integration-item">
+                                        <div class="integration-logo logo-pocket">P</div>
+                                        <div class="integration-details">
+                                            <strong>Pocket</strong>
+                                            <span>Sync articles for offline reading on e-readers and mobile devices.</span>
+                                        </div>
+                                        <button type="button" class="btn-connect" data-service="pocket">Connect</button>
+                                    </div>
+
+                                    <div class="integration-item">
+                                        <div class="integration-logo logo-instapaper">I</div>
+                                        <div class="integration-details">
+                                            <strong>Instapaper</strong>
+                                            <span>Clean reading with notes and highlights.</span>
+                                        </div>
+                                        <button type="button" class="btn-connect" data-service="instapaper">Connect</button>
+                                    </div>
+
+                                    <div class="integration-item">
+                                        <div class="integration-logo logo-readwise">R</div>
+                                        <div class="integration-details">
+                                            <strong>Readwise Reader</strong>
+                                            <span>Direct integration with your knowledge base and highlights.</span>
+                                        </div>
+                                        <button type="button" class="btn-connect" data-service="readwise">Connect</button>
+                                    </div>
+
+                                    <div class="integration-item">
+                                        <div class="integration-logo logo-raindrop">💧</div>
+                                        <div class="integration-details">
+                                            <strong>Raindrop.io</strong>
+                                            <span>Smart bookmark manager with shared collections.</span>
+                                        </div>
+                                        <button type="button" class="btn-connect" data-service="raindrop">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick sharing -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Quick Sharing Shortcuts</h3>
+                                    <p>Choose which services appear in the sharing menu of each article.</p>
+                                </div>
+
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" id="share-twitter" checked>
+                                        <span>X (Twitter)</span>
+                                    </label>
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" id="share-mastodon" checked>
+                                        <span>Mastodon</span>
+                                    </label>
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" id="share-linkedin">
+                                        <span>LinkedIn</span>
+                                    </label>
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" id="share-email" checked>
+                                        <span>Email</span>
+                                    </label>
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" id="share-copy" checked>
+                                        <span>Copy direct link</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Adresse Newsletter -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Newsletter inbox</h3>
+                                    <p>Subscribe to newsletters without cluttering your personal inbox.</p>
+                                </div>
+
+                                <div class="newsletter-box">
+                                    <p>Forward or subscribe to newsletters with your dedicated Frontpage address:</p>
+                                    <div class="copy-input-group">
+                                        <input type="text" id="newsletter-address-input" value="junior.reader@frontpage.app" readonly>
+                                        <button type="button" id="copy-newsletter-btn" class="settings-btn-secondary">Copy</button>
+                                    </div>
+                                    <small>Received newsletters will automatically appear in the Newsletters category of your feed.</small>
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <!-- 5. AI & INTELLIGENT FEATURES -->
+                        <section id="panel-ai" class="settings-panel" aria-labelledby="settings-title" hidden>
+                            <div class="panel-header">
+                                <h2>AI &amp; smart features</h2>
+                                <p>Use AI features to make your reading and research workflow more efficient.</p>
+                            </div>
+
+                            <!-- AI summaries -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Automatic AI summaries</h3>
+                                    <p>Generate a concise summary of the key points in long articles.</p>
+                                </div>
+
+                                <div class="toggle-row">
+                                    <div class="toggle-info">
+                                        <strong>Show summaries at the top of articles</strong>
+                                        <span>Add a concise summary before the article body in Reader.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-ai-summary" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="settings-grid-fields" style="margin-top: var(--space-4);">
+                                    <label class="settings-field">
+                                        <span>Preferred summary style</span>
+                                        <select id="settings-ai-style">
+                                            <option value="keypoints" selected>Key points (3 strategic bullets)</option>
+                                            <option value="short">Very short (2 sentences)</option>
+                                            <option value="analytical">Analytical (context, facts, implications)</option>
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Daily Digest -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Daily Digest settings</h3>
+                                    <p>Choose when the Digest is generated and which categories it prioritizes.</p>
+                                </div>
+
+                                <div class="settings-grid-fields">
+                                    <label class="settings-field">
+                                        <span>Briefing time</span>
+                                        <select id="settings-digest-time">
+                                            <option value="08:00">8:00 AM</option>
+                                            <option value="10:00">10:00 AM</option>
+                                            <option value="12:00">12:00 PM</option>
+                                            <option value="13:00">1:00 PM</option>
+                                            <option value="15:00">3:00 PM</option>
+                                            <option value="18:00">6:00 PM</option>
+                                            <option value="custom">Custom time…</option>
+                                        </select>
+                                    </label>
+                                    <label id="settings-custom-digest-time-field" class="settings-field" hidden>
+                                        <span>Custom time</span>
+                                        <input type="time" id="settings-custom-digest-time" value="08:00">
+                                    </label>
+                                </div>
+
+                                <div style="margin-top: var(--space-4);">
+                                    <span class="field-legend">Priority categories in Digest</span>
+                                    <div class="checkbox-grid" style="margin-top: var(--space-2);">
+                                        <label class="checkbox-card"><input type="checkbox" name="digest-cat" value="frontend" checked><span>Frontend</span></label>
+                                        <label class="checkbox-card"><input type="checkbox" name="digest-cat" value="design" checked><span>Design</span></label>
+                                        <label class="checkbox-card"><input type="checkbox" name="digest-cat" value="backend-devops"><span>Backend &amp; DevOps</span></label>
+                                        <label class="checkbox-card"><input type="checkbox" name="digest-cat" value="ai-ml" checked><span>AI &amp; ML</span></label>
+                                        <label class="checkbox-card"><input type="checkbox" name="digest-cat" value="general-tech"><span>General Tech</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <!-- 6. RACCOURCIS CLAVIER & ACCESSIBILITÉ -->
+                        <section id="panel-accessibility" class="settings-panel" aria-labelledby="settings-title" hidden>
+                            <div class="panel-header">
+                                <h2>Keyboard shortcuts &amp; accessibility</h2>
+                                <p>Fast navigation for power users and accessible reading controls.</p>
+                            </div>
+
+                            <!-- Power-User Shortcuts -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Keyboard Navigation (Power-User)</h3>
+                                    <p>Triage and read your feeds at lightning speed without touching your mouse.</p>
+                                </div>
+
+                                <div class="toggle-row">
+                                    <div class="toggle-info">
+                                        <strong>Enable Vim-style shortcuts</strong>
+                                        <span>Use j/k, o, m, s, and / throughout the app.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-vim-shortcuts" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="shortcuts-reference-table">
+                                    <div class="shortcut-row"><kbd>j</kbd> / <kbd>k</kbd><span>Next / previous article</span></div>
+                                    <div class="shortcut-row"><kbd>o</kbd> or <kbd>Enter</kbd><span>Open article in Reader</span></div>
+                                    <div class="shortcut-row"><kbd>m</kbd><span>Toggle read / unread status</span></div>
+                                    <div class="shortcut-row"><kbd>s</kbd><span>Save to favorites</span></div>
+                                    <div class="shortcut-row"><kbd>/</kbd><span>Focus global search</span></div>
+                                    <div class="shortcut-row"><kbd>?</kbd><span>Show shortcuts help</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Accessibilité WCAG -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Accessibility &amp; visual comfort</h3>
+                                    <p>Controls for a calmer, clearer experience.</p>
+                                </div>
+
+                                <div class="toggle-row">
+                                    <div class="toggle-info">
+                                        <strong>High contrast mode</strong>
+                                        <span>Strengthen borders, text, and visual separators.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-high-contrast">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="toggle-row">
+                                    <div class="toggle-info">
+                                        <strong>Reduce motion</strong>
+                                        <span>Disable transitions and animated scrolling.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-reduced-motion">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="toggle-row">
+                                    <div class="toggle-info">
+                                        <strong>Non-color status indicators</strong>
+                                        <span>Add distinct shapes and icons instead of relying only on color.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-visual-indicators">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <!-- 7. COMPTE & SÉCURITÉ -->
+                        <section id="panel-account" class="settings-panel" aria-labelledby="settings-title" hidden>
+                            <div class="panel-header">
+                                <h2>Account &amp; profile</h2>
+                                <p>Manage your identity, plan, and signed-in sessions.</p>
+                            </div>
+
+                            <!-- Profile -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>User profile</h3>
+                                    <p>Manage your identity, reading activity, and account controls on your dedicated profile page.</p>
+                                </div>
+                                <a href="#profile" class="settings-btn-secondary" style="align-self: flex-start;">Open profile</a>
+                            </div>
+
+                            <!-- Statut Compte & Sync -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Account &amp; Cloud Sync</h3>
+                                    <p id="settings-account-summary">Connect your account to sync feeds, categories and reading progress across all your devices.</p>
+                                </div>
+
+                                <div class="plan-status-box">
+                                    <div class="plan-header-badge">
+                                        <span class="plan-name" id="settings-account-status-name">Guest Mode (Local)</span>
+                                        <span class="plan-price" id="settings-account-status-tag">Unsynced</span>
+                                    </div>
+                                    <p class="plan-perks" id="settings-account-perks">Your feeds and bookmarks are currently kept in this browser only. Sign in to back up your library to the SQLite database.</p>
+                                    <button type="button" class="settings-btn-primary" id="settings-auth-action-btn" style="align-self: flex-start;">
+                                        Sign In / Create Account
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Sécurité & Sessions -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Security &amp; active sessions</h3>
+                                    <p>Devices and browsers with access to your feeds.</p>
+                                </div>
+
+                                <div class="sessions-list">
+                                    <div class="session-item is-current">
+                                        <div class="session-icon">💻</div>
+                                        <div class="session-info">
+                                            <strong>Linux x86_64 · Current browser</strong>
+                                            <span>Active now · Local IP</span>
+                                        </div>
+                                        <span class="session-tag">This session</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <!-- 8. NOTIFICATIONS -->
+                        <section id="panel-notifications" class="settings-panel" aria-labelledby="settings-title" hidden>
+                            <div class="panel-header">
+                                <h2>Notifications &amp; alerts</h2>
+                                <p>Receive alerts about important topics and configure your periodic digest.</p>
+                            </div>
+
+                            <!-- Web Push -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Web push notifications</h3>
+                                    <p>Receive desktop alerts when a feed publishes priority content.</p>
+                                </div>
+
+                                <div class="push-permission-box">
+                                    <div class="push-status-indicator">
+                                        <span class="status-dot status-inactive" id="push-status-dot"></span>
+                                        <span id="push-status-label">Desktop notifications are not configured</span>
+                                    </div>
+                                    <button type="button" id="request-push-btn" class="settings-btn-secondary">
+                                        Request browser permission
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Mots-clés prioritaires -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Priority keyword alerts</h3>
+                                    <p>Only receive an alert when an article contains these terms in its title or summary.</p>
+                                </div>
+
+                                <label class="settings-field">
+                                    <span>Keywords (comma separated)</span>
+                                    <input type="text" id="settings-keywords" placeholder="Example: CSS, React, Security, Artificial Intelligence">
+                                </label>
+                            </div>
+
+                            <!-- Digest Email -->
+                            <div class="settings-card">
+                                <div class="card-intro">
+                                    <h3>Periodic email digest</h3>
+                                    <p>Receive a weekly selection of the best articles from your feeds.</p>
+                                </div>
+
+                                <div class="toggle-row">
+                                    <div class="toggle-info">
+                                        <strong>Send the weekly Digest every Monday</strong>
+                                        <span>Sent to your profile email address at 7:00 AM.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-email-digest">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </section>
+
+                     </div>
+                 </div>
+             </form>
+
+             <!-- ⚡ Smart Filters & Auto Rules Section -->
+             <div id="settings-rules-container" class="settings-rules-section"></div>
+
+         </section>
+     </template>
+
+
+    <!-- =========================================================
+         DIGEST TEMPLATE
+    ========================================================== -->
+
+    <template id="digest-template">
+
+        <section
+            id="digest-view"
+            class="view digest-view"
+            aria-labelledby="digest-title"
+        >
+
+            <!-- =================================================
+                 DIGEST OVERVIEW
+            ================================================== -->
+
+            <header
+                id="digest-overview"
+                class="digest-overview"
+            >
+
+                <div class="digest-heading">
+
+                    <span class="section-label">
+                        Digest
+                    </span>
+
+                    <h1 id="digest-title">
+                        Your Digest
+                    </h1>
+
+                    <p id="digest-period">
+                        <!-- date / period -->
+                    </p>
+
+                </div>
+
+
+                <div class="digest-controls">
+
+                    <button
+                        type="button"
+                        id="digest-daily"
+                        data-digest-period="daily"
+                        aria-pressed="true"
+                    >
+                        Today
+                    </button>
+
+                    <button
+                        type="button"
+                        id="digest-weekly"
+                        data-digest-period="weekly"
+                        aria-pressed="false"
+                    >
+                        This week
+                    </button>
+
+                    <button
+                        type="button"
+                        id="audio-briefing"
+                    >
+                        Audio Briefing
+                    </button>
+
+                    <button
+                        type="button"
+                        id="export-pdf-magazine"
+                        class="btn-export-digest"
+                        title="Print or save as magazine-style PDF"
+                    >
+                        📰 Magazine (PDF)
+                    </button>
+
+                    <button
+                        type="button"
+                        id="export-epub-digest"
+                        class="btn-export-digest"
+                        title="Download e-book for Kindle or Kobo e-readers"
+                    >
+                        📱 E-book (.EPUB)
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <section class="digest-summary" aria-label="Digest overview">
+                <article class="digest-summary-card">
+                    <span>Unread</span>
+                    <strong>4</strong>
+                    <p>articles waiting in your feeds</p>
+                </article>
+
+                <article class="digest-summary-card">
+                    <span>Selected</span>
+                    <strong>3</strong>
+                    <p>stories selected for today</p>
+                </article>
+
+                <article class="digest-summary-card">
+                    <span>Reading time</span>
+                    <strong>8 min</strong>
+                    <p>to cover today's highlights</p>
+                </article>
+            </section>
+
+
+            <!-- =================================================
+                 QUICK BRIEF
+            ================================================== -->
+
+            <section
+                id="digest-brief"
+                class="digest-section"
+                aria-labelledby="digest-brief-title"
+            >
+
+                <div class="section-heading">
+
+                    <h2 id="digest-brief-title">
+                        Quick Brief
+                    </h2>
+
+                    <div class="reading-modes">
+
+                        <button type="button" data-reading-mode="brief" aria-pressed="true">
+                            3 min
+                        </button>
+
+                        <button type="button" data-reading-mode="standard" aria-pressed="false">
+                            10 min
+                        </button>
+
+                        <button type="button" data-reading-mode="deep" aria-pressed="false">
+                            Deep dive
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="digest-brief-content"
+                    class="digest-brief-content"
+                >
+                    <p class="digest-brief-copy">
+                        You have a small, focused set of new articles today. Accessibility,
+                        frontend architecture and edge performance are the strongest themes.
+                    </p>
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 WHAT'S TRENDING
+            ================================================== -->
+
+            <section
+                id="trending"
+                class="digest-section"
+                aria-labelledby="trending-title"
+            >
+
+                <div class="section-heading">
+
+                    <h2 id="trending-title">
+                        What's Trending
+                    </h2>
+
+                </div>
+
+
+                <div
+                    id="trending-content"
+                    class="trending-content"
+                >
+                    <div class="trend-item"><div><strong>CSS</strong><span>3 articles mention this topic</span></div><b>+3</b></div>
+                    <div class="trend-item"><div><strong>Accessibility</strong><span>2 articles mention this topic</span></div><b>+2</b></div>
+                    <div class="trend-item"><div><strong>Performance</strong><span>2 articles mention this topic</span></div><b>+2</b></div>
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 TOP STORIES
+            ================================================== -->
+
+            <section
+                id="top-stories"
+                class="digest-section"
+                aria-labelledby="top-stories-title"
+            >
+
+                <div class="section-heading">
+
+                    <h2 id="top-stories-title">
+                        Top Stories
+                    </h2>
+
+                    <span class="section-description">
+                        Stories you should know
+                    </span>
+
+                </div>
+
+
+                <!-- AI Daily Briefing Container -->
+                <div id="ai-daily-briefing-card" class="ai-daily-briefing-card">
+                    <div class="ai-briefing-header">
+                        <div class="ai-briefing-title">
+                            <span class="sparkle-icon">✨</span>
+                            <h3>Morning Briefing &amp; AI Summary</h3>
+                        </div>
+                        <button type="button" id="btn-generate-ai-digest" class="btn-ai-digest-generate">
+                            🔄 <span>Generate Briefing</span>
+                        </button>
+                    </div>
+                    <div id="ai-briefing-content" class="ai-briefing-body">
+                        <p class="ai-briefing-placeholder">Generate a smart synthesized briefing of top news across your feeds in under 2 minutes.</p>
+                    </div>
+                    <div id="ai-briefing-themes" class="ai-briefing-themes"></div>
+                </div>
+
+                <!-- Story clusters injected here -->
+                <div
+                    id="story-clusters"
+                    class="story-clusters"
+                >
+                    <article class="digest-story digest-story-featured">
+                        <div class="digest-story-content">
+                            <p class="digest-story-meta">Smashing Magazine · 2h ago</p>
+                            <h3>Practical Guide to Designing for Colorblind Users</h3>
+                            <p>
+                                A focused guide to designing interfaces that remain readable,
+                                accessible and clear for more people.
+                            </p>
+                            <div class="digest-takeaways">
+                                <strong>Why it matters</strong>
+                                <span>Small color and hierarchy choices can change how clearly people understand an interface.</span>
+                            </div>
+                            <div class="digest-story-footer">
+                                <span class="feed-item-category">Frontend</span>
+                                <button type="button">Read story</button>
+                            </div>
+                        </div>
+                        <aside class="related-sources">
+                            <span>Related sources</span>
+                            <a href="#feed">Josh W. Comeau</a>
+                            <a href="#feed">Figma Blog</a>
+                            <a href="#feed">MDN Blog</a>
+                        </aside>
+                    </article>
+
+                    <article class="digest-story">
+                        <div class="digest-story-content">
+                            <p class="digest-story-meta">Cloudflare Blog · 3h ago</p>
+                            <h3>How We Reduced P99 Latency by 60% with Edge-First Caching</h3>
+                            <p>What changed when caching decisions moved closer to the people using the product.</p>
+                            <div class="digest-story-footer">
+                                <span class="feed-item-category">Backend &amp; DevOps</span>
+                                <button type="button">Read story</button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 BY TOPIC
+            ================================================== -->
+
+            <section
+                id="by-topic"
+                class="digest-section"
+                aria-labelledby="by-topic-title"
+            >
+
+                <div class="section-heading">
+
+                    <h2 id="by-topic-title">
+                        By Topic
+                    </h2>
+
+                    <span class="section-description">
+                        What changed across your interests
+                    </span>
+
+                </div>
+
+
+                <!-- Topic summaries injected here -->
+                <div
+                    id="digest-topics"
+                    class="digest-topics"
+                >
+                    <article class="digest-topic-card">
+                        <div><h3>Frontend</h3><span>2 new</span></div>
+                        <p>Accessibility and responsive component design lead today's frontend stories.</p>
+                        <a href="#feed">View articles</a>
+                    </article>
+                    <article class="digest-topic-card">
+                        <div><h3>Backend &amp; DevOps</h3><span>1 new</span></div>
+                        <p>Edge caching and performance trade-offs are the main operational signals.</p>
+                        <a href="#feed">View articles</a>
+                    </article>
+                    <article class="digest-topic-card">
+                        <div><h3>AI &amp; ML</h3><span>1 new</span></div>
+                        <p>Reliable retrieval systems remain a recurring subject across your sources.</p>
+                        <a href="#feed">View articles</a>
+                    </article>
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CATCH UP
+            ================================================== -->
+
+            <section
+                id="catch-up"
+                class="digest-section catch-up-section"
+                aria-labelledby="catch-up-title"
+            >
+
+                <div class="section-heading">
+
+                    <h2 id="catch-up-title">
+                        Catch Up
+                    </h2>
+
+                    <span id="catch-up-progress-text">
+                        2 of 4 unread articles reviewed
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="catch-up-progress"
+                    aria-hidden="true"
+                >
+                    <div
+                        id="catch-up-progress-bar"
+                        class="progress-bar"
+                        style="width: 50%"
+                    ></div>
+                </div>
+
+
+                <div
+                    id="catch-up-content"
+                    class="catch-up-content"
+                >
+                    <p>Finish the remaining two articles now, or keep them available in Feed for later.</p>
+                </div>
+
+
+                <button
+                    type="button"
+                    id="mark-digest-read"
+                >
+                    Mark remaining as read
+                </button>
+
+            </section>
+
+        </section>
+
+    </template>
+
+
+    <!-- =========================================================
+         DISCOVER TEMPLATE
+    ========================================================== -->
+
+    <template id="discover-template">
+
+        <section
+            id="discover-view"
+            class="view discover-view"
+            aria-labelledby="discover-title"
+        >
+
+            <!-- =================================================
+                 DISCOVER HEADER
+            ================================================== -->
+
+            <header class="discover-header">
+
+                <div class="discover-heading">
+
+                    <span class="section-label">
+                        Discover
+                    </span>
+
+                    <h1 id="discover-title">
+                        Find Something New
+                    </h1>
+
+                    <p>
+                        Explore new sources and collections based on
+                        your interests.
+                    </p>
+
+                </div>
+
+                <form id="discover-search" class="discover-search" role="search">
+
+                    <input
+                        type="search"
+                        id="discover-search-input"
+                        placeholder="Search sources, publications or topics..."
+                        aria-label="Search sources, publications or topics"
+                    >
+
+                    <button
+                        type="submit"
+                        id="discover-search-button"
+                    >
+                        <img src="assets/icons/search-icon.svg" alt="" aria-hidden="true">
+                        <span>Search</span>
+                    </button>
+
+                </form>
+
+            </header>
+
+
+            <!-- =================================================
+                 EXPLORE BY TOPIC (SLEEK TOPIC PILLS)
+            ================================================== -->
+            <section id="explore-topics" class="discover-section" aria-labelledby="explore-topics-title">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="explore-topics-title">Explore by topic</h2>
+                        <span class="section-description">Click a topic to discover active feeds and explore the web</span>
+                    </div>
+                </div>
+
+                <div class="topic-pills-grid topic-card-grid" role="group" aria-label="Topics">
+                    <button type="button" class="topic-pill" data-topic="Frontend"><span class="pill-dot">🎨</span><div class="pill-text"><strong>Frontend</strong><span class="pill-sub">Web interfaces &amp; UI</span></div></button>
+                    <button type="button" class="topic-pill" data-topic="Design"><span class="pill-dot">✨</span><div class="pill-text"><strong>Design</strong><span class="pill-sub">UX, UI &amp; product</span></div></button>
+                    <button type="button" class="topic-pill" data-topic="Backend & DevOps"><span class="pill-dot">⚙️</span><div class="pill-text"><strong>Backend &amp; DevOps</strong><span class="pill-sub">Cloud, APIs &amp; infra</span></div></button>
+                    <button type="button" class="topic-pill" data-topic="Artificial Intelligence"><span class="pill-dot">🤖</span><div class="pill-text"><strong>AI &amp; ML</strong><span class="pill-sub">Machine learning &amp; LLMs</span></div></button>
+                    <button type="button" class="topic-pill" data-topic="Cybersecurity"><span class="pill-dot">🛡️</span><div class="pill-text"><strong>Security</strong><span class="pill-sub">Infosec &amp; privacy</span></div></button>
+                    <button type="button" class="topic-pill" data-topic="Programming"><span class="pill-dot">💻</span><div class="pill-text"><strong>Programming</strong><span class="pill-sub">Languages &amp; systems</span></div></button>
+                    <button type="button" class="topic-pill" data-topic="Open Source"><span class="pill-dot">🌐</span><div class="pill-text"><strong>Open Source</strong><span class="pill-sub">Community &amp; tools</span></div></button>
+                    <button type="button" class="topic-pill" data-topic="Mobile Development"><span class="pill-dot">📱</span><div class="pill-text"><strong>Mobile</strong><span class="pill-sub">iOS, Android &amp; Flutter</span></div></button>
+                </div>
+            </section>
+
+
+            <!-- =================================================
+                 DEDICATED TOPIC & LIVE WEB RESULTS
+            ================================================== -->
+            <section
+                id="discover-live-results-section"
+                class="discover-section discover-results-dedicated"
+                aria-labelledby="discover-live-results-title"
+                hidden
+            >
+                <div class="section-heading dedicated-heading">
+                    <div>
+                        <div class="topic-active-badge" id="topic-active-badge">✦ Active Topic</div>
+                        <h2 id="discover-live-results-title">🌐 Live Web Results</h2>
+                        <span id="discover-live-results-desc" class="section-description">Feeds found across the open web</span>
+                    </div>
+                    <button type="button" id="btn-clear-discover-search" class="btn btn-secondary btn-sm">← Back to all recommendations</button>
+                </div>
+
+                <div id="discover-live-loading" class="discover-loading-state" hidden>
+                    <div class="loading-spinner"></div>
+                    <span>Searching live feeds across the web...</span>
+                </div>
+
+                <div id="discover-live-results-list" class="source-card-grid"></div>
+            </section>
+
+
+            <!-- =================================================
+                 DEFAULT SECTIONS (Recommendations & Collections)
+            ================================================== -->
+            <div id="discover-default-sections">
+
+                <section
+                    id="recommended-sources"
+                    class="discover-section"
+                    aria-labelledby="recommended-sources-title"
+                >
+                    <div class="section-heading">
+                        <div>
+                            <h2 id="recommended-sources-title">Recommended for you</h2>
+                            <span class="section-description">Sources selected from your interests</span>
+                        </div>
+                    </div>
+
+                    <div id="recommended-sources-list" class="source-card-grid">
+                        <article class="source-card">
+                            <div class="source-card-top"><span class="source-icon">CSS</span><button type="button">Follow</button></div>
+                            <h3>CSS-Tricks</h3><p>Practical techniques and articles about modern CSS and web design.</p><span>Frontend · 24 articles</span>
+                        </article>
+                        <article class="source-card">
+                            <div class="source-card-top"><span class="source-icon">JS</span><button type="button">Follow</button></div>
+                            <h3>JavaScript Weekly</h3><p>A weekly selection of JavaScript news, tools and useful reading.</p><span>Programming · 18 articles</span>
+                        </article>
+                        <article class="source-card">
+                            <div class="source-card-top"><span class="source-icon">DEV</span><button type="button">Follow</button></div>
+                            <h3>DEV Community</h3><p>Articles and discussions created by developers around the world.</p><span>Development · 32 articles</span>
+                        </article>
+                    </div>
+                </section>
+
+
+                <!-- =================================================
+                     FEATURED COLLECTIONS
+                ================================================== -->
+                <section
+                    id="featured-collections"
+                    class="discover-section"
+                    aria-labelledby="featured-collections-title"
+                >
+                    <div class="section-heading">
+                        <h2 id="featured-collections-title">
+                            Featured Collections
+                        </h2>
+                        <span class="section-description">
+                            Curated sources worth exploring
+                        </span>
+                    </div>
+
+                    <!-- Collections injected here -->
+                    <div
+                        id="collections-list"
+                        class="collections-list collection-card-grid"
+                    >
+                        <article class="collection-card"><span>WEB DEVELOPMENT</span><h3>Modern Web Development</h3><p>Frontend, JavaScript, CSS and current development practices.</p><small>12 sources</small></article>
+                        <article class="collection-card"><span>ARTIFICIAL INTELLIGENCE</span><h3>AI &amp; Machine Learning</h3><p>News, research and practical resources around modern AI.</p><small>16 sources</small></article>
+                        <article class="collection-card"><span>DEVELOPER TOOLS</span><h3>Tools for Developers</h3><p>Frameworks, editors, platforms and tools for the modern web.</p><small>10 sources</small></article>
+                    </div>
+                </section>
+
+
+                <!-- =================================================
+                     POPULAR SOURCES
+                ================================================== -->
+                <section
+                    id="popular-sources"
+                    class="discover-section"
+                    aria-labelledby="popular-sources-title"
+                >
+                    <div class="section-heading">
+                        <h2 id="popular-sources-title">
+                            Popular Sources
+                        </h2>
+                    </div>
+
+                    <!-- Popular sources injected here -->
+                    <div
+                        id="popular-sources-list"
+                        class="popular-source-list"
+                    >
+                        <article class="popular-source"><span class="source-icon">GH</span><div><h3>GitHub Blog</h3><p>Software development, GitHub and open source.</p></div><button type="button">Follow</button></article>
+                        <article class="popular-source"><span class="source-icon">LI</span><div><h3>Linux Foundation</h3><p>Linux, open source and cloud technologies.</p></div><button type="button">Follow</button></article>
+                        <article class="popular-source"><span class="source-icon">MD</span><div><h3>MDN Web Docs</h3><p>Documentation and resources for web developers.</p></div><button type="button">Follow</button></article>
+                    </div>
+                </section>
+
+            </div>
+
+            <p id="discover-empty-state" class="discover-empty-state" hidden>
+                No source or topic matches this search yet.
+            </p>
+
+        </section>
+
+    </template>
+
+
+    <!-- =========================================================
+         ANALYTICS TEMPLATE
+    ========================================================== -->
+
+    <template id="analytics-template">
+
+        <section class="analytics-view" aria-labelledby="analytics-title">
+
+            <header class="analytics-header">
+                <div class="analytics-header-text">
+                    <h1 id="analytics-title">Analytics &amp; Reading Habits</h1>
+                    <p class="analytics-subtitle" id="analytics-subtitle">
+                        Explore your consistency, favorite topics, and time optimized with AI.
+                    </p>
+                </div>
+                <div class="analytics-header-actions">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-analytics" aria-label="Refresh statistics">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </header>
+
+            <!-- Streak & Achievement Banner -->
+            <div class="analytics-streak-banner" id="analytics-streak-banner">
+                <!-- Injected dynamically by analyticsView.js -->
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <div class="analytics-kpi-grid">
+                <div class="analytics-kpi-card">
+                    <div class="kpi-icon kpi-blue">📚</div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Articles Read</span>
+                        <span class="kpi-value" id="kpi-total-read">-</span>
+                        <span class="kpi-subtext" id="kpi-read-today">- read today</span>
+                    </div>
+                </div>
+
+                <div class="analytics-kpi-card">
+                    <div class="kpi-icon kpi-green">⏱️</div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Reading Time</span>
+                        <span class="kpi-value" id="kpi-total-time">-</span>
+                        <span class="kpi-subtext">total estimated</span>
+                    </div>
+                </div>
+
+                <div class="analytics-kpi-card">
+                    <div class="kpi-icon kpi-purple">✨</div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Time Saved (AI)</span>
+                        <span class="kpi-value" id="kpi-saved-time">-</span>
+                        <span class="kpi-subtext" id="kpi-ai-count">- summaries generated</span>
+                    </div>
+                </div>
+
+                <div class="analytics-kpi-card">
+                    <div class="kpi-icon kpi-amber">⭐</div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Saved Articles</span>
+                        <span class="kpi-value" id="kpi-total-saved">-</span>
+                        <span class="kpi-subtext" id="kpi-total-feeds">- feeds followed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Heatmap Section -->
+            <section class="analytics-section">
+                <div class="section-heading">
+                    <div>
+                        <h2>🔥 Annual Activity Calendar</h2>
+                        <p class="section-desc">Reading history across the past 52 weeks.</p>
+                    </div>
+                    <div class="heatmap-legend" aria-hidden="true">
+                        <span>Less</span>
+                        <span class="legend-cell lvl-0"></span>
+                        <span class="legend-cell lvl-1"></span>
+                        <span class="legend-cell lvl-2"></span>
+                        <span class="legend-cell lvl-3"></span>
+                        <span class="legend-cell lvl-4"></span>
+                        <span>More</span>
+                    </div>
+                </div>
+
+                <div class="heatmap-container-card">
+                    <div class="heatmap-scroll-wrapper" id="heatmap-wrapper">
+                        <!-- Heatmap SVG generated by JS -->
+                    </div>
+                    <div class="heatmap-tooltip" id="heatmap-tooltip" hidden></div>
+                </div>
+            </section>
+
+            <!-- Grid 2 columns: Categories & Top Feeds -->
+            <div class="analytics-two-columns">
+                <!-- Categories Breakdown -->
+                <section class="analytics-section analytics-card">
+                    <h2>🏷️ Category Breakdown</h2>
+                    <p class="section-desc">Distribution of your reading by topic.</p>
+                    <div class="category-breakdown-list" id="category-breakdown-list">
+                        <!-- Injected by JS -->
+                    </div>
+                </section>
+
+                <!-- Top 5 Feeds -->
+                <section class="analytics-section analytics-card">
+                    <h2>📰 Top 5 Most Read Feeds</h2>
+                    <p class="section-desc">Your favorite news sources.</p>
+                    <div class="top-feeds-list" id="top-feeds-list">
+                        <!-- Injected by JS -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- Grid 2 columns: Time of Day & Day of Week -->
+            <div class="analytics-two-columns">
+                <!-- Hourly Habits -->
+                <section class="analytics-section analytics-card">
+                    <h2>🕒 Peak Reading Times</h2>
+                    <p class="section-desc">Breakdown of your reading across the 24 hours.</p>
+                    <div class="time-slots-grid" id="time-slots-grid">
+                        <!-- Injected by JS -->
+                    </div>
+                </section>
+
+                <!-- Day of Week Habits -->
+                <section class="analytics-section analytics-card">
+                    <h2>📅 Activity by Day of Week</h2>
+                    <p class="section-desc">Your most consistent reading days.</p>
+                    <div class="weekdays-chart" id="weekdays-chart">
+                        <!-- Injected by JS -->
+                    </div>
+                </section>
+            </div>
+
+    </template>
+
+    <!-- =========================================================
+         WELCOME / LANDING TEMPLATE
+    ========================================================== -->
+    <template id="welcome-template">
+        <section id="welcome-view" class="view welcome-view" aria-labelledby="welcome-title">
+            <!-- Dynamically populated by landingHero.js -->
+        </section>
+    </template>
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script type="module" src="assets/js/app.js"></script>
+
+</body>
+
+</html>

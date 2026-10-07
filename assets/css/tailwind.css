@@ -1,0 +1,28 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@theme inline {
+  --color-page: var(--color-bg-primary);
+  --color-page-muted: var(--color-bg-secondary);
+  --color-page-subtle: var(--color-bg-tertiary);
+  --color-panel: var(--color-surface);
+  --color-line: var(--color-border);
+  --color-line-subtle: var(--color-border-subtle);
+  --color-ink: var(--color-text-primary);
+  --color-ink-muted: var(--color-text-secondary);
+  --color-ink-subtle: var(--color-text-tertiary);
+  --color-brand: var(--color-accent);
+  --color-brand-hover: var(--color-accent-hover);
+  --color-brand-subtle: var(--color-accent-subtle);
+  --color-status-success: var(--color-success);
+  --color-status-warning: var(--color-warning);
+  --color-status-error: var(--color-error);
+  --font-ui: var(--font-sans);
+  --font-reading: var(--font-serif);
+  --font-code: var(--font-mono);
+  --shadow-panel: var(--shadow-sm);
+  --shadow-floating: var(--shadow-md);
+  --shadow-dialog: var(--shadow-lg);
+  --radius-control: var(--radius-md);
+  --radius-card: var(--radius-lg);
+}

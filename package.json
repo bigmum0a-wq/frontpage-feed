@@ -1,0 +1,25 @@
+{
+  "name": "frontpage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "backend/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server:dev": "node --watch backend/server.js",
+    "test": "node --test --test-concurrency=1 backend/tests/*.test.js",
+    "dev": "tailwindcss -i ./assets/css/tailwind.css -o ./assets/css/tailwind.output.css --watch",
+    "build": "tailwindcss -i ./assets/css/tailwind.css -o ./assets/css/tailwind.output.css"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3"
+  }
+}
