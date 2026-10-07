@@ -1,7 +1,7 @@
 // FrontPage Service Worker - Offline-First Engine
-const CACHE_NAME = 'frontpage-v7';
-const API_CACHE_NAME = 'frontpage-api-v7';
-const IMAGE_CACHE_NAME = 'frontpage-images-v7';
+const CACHE_NAME = 'frontpage-v8';
+const API_CACHE_NAME = 'frontpage-api-v8';
+const IMAGE_CACHE_NAME = 'frontpage-images-v8';
 
 
 const STATIC_ASSETS = [
