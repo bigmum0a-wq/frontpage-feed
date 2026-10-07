@@ -121,23 +121,19 @@
         </header>
 
         <!-- =====================================================
-             SUB-HEADER PERSISTENT TICKER (Non lus & Quick Actions)
+             SUB-HEADER UNREAD TICKER BAR (Visible only when unread items exist)
         ====================================================== -->
-        <div id="sub-header-ticker" class="sub-header-ticker" role="region" aria-label="État de lecture des articles">
-            <div class="ticker-left">
+        <div id="sub-header-ticker" class="sub-header-ticker" role="status" aria-live="polite" hidden>
+            <div class="ticker-centered-content">
                 <span class="pulsing-live-dot" id="ticker-live-dot" aria-hidden="true"></span>
                 <span class="ticker-status-text" id="ticker-status-text">
-                    <strong id="ticker-unread-count">0</strong> articles non lus
+                    <strong id="ticker-unread-count">0</strong> articles unread
                 </span>
                 <span class="ticker-divider" aria-hidden="true">·</span>
-                <a href="#feed" class="ticker-link" id="ticker-view-feed-link">Voir les flux</a>
-            </div>
-            <div class="ticker-right">
-                <button type="button" class="ticker-btn-mark-all" id="ticker-mark-all-btn" title="Marquer tous les articles comme lus">
-                    ✓ Tout marquer comme lu
-                </button>
+                <a href="#feed" class="ticker-link" id="ticker-view-feed-link">View feed</a>
             </div>
         </div>
+
 
 
         <aside class="app-sidebar" aria-label="Application sidebar">

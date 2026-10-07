@@ -65,18 +65,6 @@ export function setHeaderProfileName(name) {
 }
 
 function initialiseSubHeaderTicker() {
-  const markAllBtn = document.querySelector('#ticker-mark-all-btn');
-
-  markAllBtn?.addEventListener('click', async () => {
-    const count = getUnreadCount(state.articles);
-    if (count === 0) {
-      showToast('Tous les flux sont déjà lus !', 'info');
-      return;
-    }
-    await markAllArticlesAsRead();
-    showToast('Tous les articles ont été marqués comme lus.', 'success');
-  });
-
   // Update whenever feed change event occurs
   window.addEventListener('frontpage:feed-change', () => {
     updateSubHeaderTicker();
@@ -86,33 +74,27 @@ function initialiseSubHeaderTicker() {
 }
 
 export function updateSubHeaderTicker() {
+  const tickerEl = document.querySelector('#sub-header-ticker');
   const countEl = document.querySelector('#ticker-unread-count');
   const statusEl = document.querySelector('#ticker-status-text');
   const liveDot = document.querySelector('#ticker-live-dot');
-  const markAllBtn = document.querySelector('#ticker-mark-all-btn');
 
-  if (!statusEl) return;
+  if (!tickerEl || !statusEl) return;
 
   const unreadCount = getUnreadCount(state.articles);
 
-  if (countEl) countEl.textContent = unreadCount;
-
   if (unreadCount > 0) {
-    statusEl.innerHTML = `<strong id="ticker-unread-count">${unreadCount}</strong> ${unreadCount === 1 ? 'article non lu' : 'articles non lus'}`;
+    tickerEl.hidden = false;
+    document.body.classList.add('has-sub-header-ticker');
+    if (countEl) countEl.textContent = unreadCount;
+    statusEl.innerHTML = `<strong id="ticker-unread-count">${unreadCount}</strong> ${unreadCount === 1 ? 'unread article' : 'unread articles'}`;
     liveDot?.classList.remove('is-caught-up');
     liveDot?.classList.add('is-active');
-    if (markAllBtn) {
-      markAllBtn.disabled = false;
-      markAllBtn.style.opacity = '1';
-    }
   } else {
-    statusEl.innerHTML = `<span class="ticker-caught-up-text">✓ Tous les articles sont lus</span>`;
-    liveDot?.classList.remove('is-active');
-    liveDot?.classList.add('is-caught-up');
-    if (markAllBtn) {
-      markAllBtn.disabled = true;
-      markAllBtn.style.opacity = '0.6';
-    }
+    // Hide bar completely when all articles are read
+    tickerEl.hidden = true;
+    document.body.classList.remove('has-sub-header-ticker');
   }
 }
+
 
