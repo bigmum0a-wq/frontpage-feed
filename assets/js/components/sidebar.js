@@ -33,11 +33,11 @@ function createCountBadge(unread, total) {
   if (unread > 0) {
     span.className = 'sidebar-count is-unread';
     span.textContent = unread > 99 ? '99+' : String(unread);
-    span.setAttribute('aria-label', `${unread} non lu${unread > 1 ? 's' : ''}`);
+    span.setAttribute('aria-label', `${unread} unread`);
   } else {
     span.className = 'sidebar-count is-total';
     span.textContent = total > 99 ? '99+' : String(total);
-    span.setAttribute('aria-label', `${total} article${total > 1 ? 's' : ''}`);
+    span.setAttribute('aria-label', `${total} articles`);
   }
 
   return span;

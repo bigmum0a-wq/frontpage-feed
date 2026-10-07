@@ -34,15 +34,15 @@ export function createFeedItem(article, onArticleOpen) {
   articleButton.type = 'button';
   articleButton.setAttribute(
     'aria-label',
-    `${article.isRead ? 'Lu' : 'Non lu'} : ${article.title}`,
+    `${article.isRead ? 'Read' : 'Unread'}: ${article.title}`,
   );
 
   meta.className = 'feed-item-meta';
 
-  // Marqueur visuel lu / non lu (point coloré)
+  // Visual read / unread indicator dot
   unreadDot.className = `feed-item-unread-dot ${article.isRead ? 'is-read' : 'is-unread'}`;
-  unreadDot.title = article.isRead ? 'Article lu' : 'Article non lu';
-  unreadDot.setAttribute('aria-label', article.isRead ? 'Lu' : 'Non lu');
+  unreadDot.title = article.isRead ? 'Read article' : 'Unread article';
+  unreadDot.setAttribute('aria-label', article.isRead ? 'Read' : 'Unread');
 
   categoryDot.className = 'feed-category-dot';
   categoryDot.style.backgroundColor = category?.color ?? 'var(--color-text-tertiary)';
@@ -80,38 +80,39 @@ export function createFeedItem(article, onArticleOpen) {
 
   actionsWrap.className = 'feed-item-actions';
 
-  // Bouton d'action rapide Lu / Non lu
+  // Read / Unread quick toggle
   toggleReadBtn.type = 'button';
   toggleReadBtn.className = `feed-item-action-btn btn-action-read ${article.isRead ? 'is-read' : 'is-unread'}`;
-  toggleReadBtn.title = article.isRead ? 'Marquer comme non lu' : 'Marquer comme lu';
+  toggleReadBtn.title = article.isRead ? 'Mark as unread' : 'Mark as read';
   toggleReadBtn.setAttribute('aria-label', toggleReadBtn.title);
   toggleReadBtn.innerHTML = article.isRead
-    ? `<span class="action-icon">✓</span> <span class="action-text">Lu</span>`
-    : `<span class="action-icon">○</span> <span class="action-text">Non lu</span>`;
+    ? `<span class="action-icon">✓</span> <span class="action-text">Read</span>`
+    : `<span class="action-icon">○</span> <span class="action-text">Unread</span>`;
   toggleReadBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleArticleRead(article.id);
-    showToast(article.isRead ? 'Marqué comme non lu' : 'Marqué comme lu', 'info');
+    showToast(article.isRead ? 'Marked as unread' : 'Marked as read', 'info');
   });
 
-  // Bouton d'action rapide Sauvegarder pour plus tard
+  // Save for later quick toggle
   toggleSaveBtn.type = 'button';
   toggleSaveBtn.className = `feed-item-action-btn btn-action-save ${article.isSaved ? 'is-saved' : ''}`;
-  toggleSaveBtn.title = article.isSaved ? 'Retirer des sauvegardes' : 'Sauvegarder pour plus tard';
+  toggleSaveBtn.title = article.isSaved ? 'Remove from saved' : 'Save for later';
   toggleSaveBtn.setAttribute('aria-label', toggleSaveBtn.title);
   toggleSaveBtn.innerHTML = article.isSaved
-    ? `<span class="action-icon">★</span> <span class="action-text">Sauvegardé</span>`
-    : `<span class="action-icon">☆</span> <span class="action-text">Sauvegarder</span>`;
+    ? `<span class="action-icon">★</span> <span class="action-text">Saved</span>`
+    : `<span class="action-icon">☆</span> <span class="action-text">Save</span>`;
   toggleSaveBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleArticleSaved(article.id);
-    showToast(article.isSaved ? 'Retiré des favoris' : 'Article sauvegardé pour plus tard', 'info');
+    showToast(article.isSaved ? 'Removed from saved' : 'Article saved for later', 'info');
   });
 
   actionsWrap.append(toggleReadBtn, toggleSaveBtn);
   footerRow.append(categoryLabel, actionsWrap);
 
   articleButton.append(meta, title, excerpt, footerRow);
+
   articleButton.addEventListener('click', () => {
     markArticleAsRead(article.id);
     onArticleOpen(article);
