@@ -132,20 +132,6 @@
         margin-left: 0.5rem;
     }
 
-    /* Sub-header ticker responsive */
-    .sub-header-ticker {
-        position: static;
-        top: auto;
-        height: auto;
-        padding: var(--space-2) var(--space-4);
-        justify-content: center;
-    }
-
-    .ticker-centered-content {
-        width: 100%;
-        justify-content: center;
-    }
-
     .app-sidebar {
         position: static;
         width: 100%;

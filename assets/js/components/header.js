@@ -1,8 +1,6 @@
 // assets/js/components/header.js
 import { onAuthChange, isGuestUser, getCurrentUser, logoutUser } from '../services/authService.js';
 import { openAuthModal } from './authModal.js';
-import { getUnreadCount, markAllArticlesAsRead, state } from '../state.js';
-import { showToast } from './toast.js';
 
 export function initialiseHeader({ onAddFeed, onOpenProfile }) {
   const addFeedButton = document.querySelector('.add');
@@ -27,9 +25,6 @@ export function initialiseHeader({ onAddFeed, onOpenProfile }) {
 
   // Initial update
   updateHeaderUser(getCurrentUser(), isGuestUser());
-
-  // Initialise Sub-header Persistent Ticker
-  initialiseSubHeaderTicker();
 }
 
 function updateHeaderUser(user, isGuest) {
@@ -64,37 +59,5 @@ export function setHeaderProfileName(name) {
   if (userName && name) userName.textContent = name.trim();
 }
 
-function initialiseSubHeaderTicker() {
-  // Update whenever feed change event occurs
-  window.addEventListener('frontpage:feed-change', () => {
-    updateSubHeaderTicker();
-  });
-
-  updateSubHeaderTicker();
-}
-
-export function updateSubHeaderTicker() {
-  const tickerEl = document.querySelector('#sub-header-ticker');
-  const countEl = document.querySelector('#ticker-unread-count');
-  const statusEl = document.querySelector('#ticker-status-text');
-  const liveDot = document.querySelector('#ticker-live-dot');
-
-  if (!tickerEl || !statusEl) return;
-
-  const unreadCount = getUnreadCount(state.articles);
-
-  if (unreadCount > 0) {
-    tickerEl.hidden = false;
-    document.body.classList.add('has-sub-header-ticker');
-    if (countEl) countEl.textContent = unreadCount;
-    statusEl.innerHTML = `<strong id="ticker-unread-count">${unreadCount}</strong> ${unreadCount === 1 ? 'unread article' : 'unread articles'}`;
-    liveDot?.classList.remove('is-caught-up');
-    liveDot?.classList.add('is-active');
-  } else {
-    // Hide bar completely when all articles are read
-    tickerEl.hidden = true;
-    document.body.classList.remove('has-sub-header-ticker');
-  }
-}
 
 

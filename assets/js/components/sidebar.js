@@ -18,13 +18,65 @@ function getArticlesForFeed(feedId) {
   return state.articles.filter((article) => article.feedId === feedId);
 }
 
-function createCount(count) {
-  const countElement = document.createElement('span');
-  countElement.className = 'sidebar-count';
-  countElement.textContent = count > 99 ? '99+' : String(count);
 
-  return countElement;
+/**
+ * Crée un badge de compteur pour la sidebar.
+ * - Si `unread > 0` : affiche le nombre non lus (accent rouge).
+ * - Si `unread === 0` et `total > 0` : affiche le total (gris neutre).
+ * - Si `total === 0` : n'affiche rien.
+ */
+function createCountBadge(unread, total) {
+  if (total === 0) return null;
+
+  const span = document.createElement('span');
+
+  if (unread > 0) {
+    span.className = 'sidebar-count is-unread';
+    span.textContent = unread > 99 ? '99+' : String(unread);
+    span.setAttribute('aria-label', `${unread} non lu${unread > 1 ? 's' : ''}`);
+  } else {
+    span.className = 'sidebar-count is-total';
+    span.textContent = total > 99 ? '99+' : String(total);
+    span.setAttribute('aria-label', `${total} article${total > 1 ? 's' : ''}`);
+  }
+
+  return span;
 }
+
+function createNavigationItem({ label, unread, total, isActive, onSelect, className = '', href = '#feed' }) {
+  const listItem = document.createElement('li');
+  const link = document.createElement('a');
+  const labelElement = document.createElement('span');
+
+  listItem.className = className;
+  link.href = href;
+  labelElement.textContent = label;
+
+  link.classList.toggle('active', isActive);
+
+  if (isActive) {
+    link.setAttribute('aria-current', 'page');
+  }
+
+  const badge = createCountBadge(unread ?? 0, total ?? 0);
+
+  if (badge !== null) {
+    link.append(labelElement, badge);
+  } else {
+    link.append(labelElement);
+  }
+
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    closeMobileSidebar();
+    onSelect(event);
+  });
+
+  listItem.append(link);
+
+  return listItem;
+}
+
 
 function createCategoryLabel(category) {
   const label = document.createElement('span');
@@ -53,38 +105,6 @@ function closeMobileSidebar() {
   }
 }
 
-function createNavigationItem({ label, count, isActive, onSelect, className = '', href = '#feed' }) {
-  const listItem = document.createElement('li');
-  const link = document.createElement('a');
-  const labelElement = document.createElement('span');
-
-  listItem.className = className;
-  link.href = href;
-  labelElement.textContent = label;
-
-  link.classList.toggle('active', isActive);
-
-  if (isActive) {
-    link.setAttribute('aria-current', 'page');
-  }
-
-  if (typeof count === 'number') {
-    link.append(labelElement, createCount(count));
-  } else {
-    link.append(labelElement);
-  }
-
-  link.addEventListener('click', (event) => {
-    event.preventDefault();
-    closeMobileSidebar();
-    onSelect(event);
-  });
-
-  listItem.append(link);
-
-  return listItem;
-}
-
 function renderFeedSidebar(onFeedSelection) {
   const mainList = document.createElement('ul');
   const categoryGroup = document.createElement('section');
@@ -98,10 +118,14 @@ function renderFeedSidebar(onFeedSelection) {
   categoryHeading.textContent = 'Categories';
   categoryList.className = 'sidebar-category-list';
 
+  const allTotal = state.articles.length;
+  const allUnread = getUnreadCount();
+
   mainList.append(
     createNavigationItem({
       label: 'All items',
-      count: getUnreadCount(),
+      unread: allUnread,
+      total: allTotal,
       isActive:
         !state.showSavedItems && state.activeCategoryId === 'all' && !state.activeFeedId,
       onSelect: () => {
@@ -111,7 +135,8 @@ function renderFeedSidebar(onFeedSelection) {
     }),
     createNavigationItem({
       label: 'Saved',
-      count: savedCount,
+      unread: 0,
+      total: savedCount,
       isActive: state.showSavedItems,
       onSelect: () => {
         setSavedItemsView();
@@ -122,9 +147,13 @@ function renderFeedSidebar(onFeedSelection) {
 
   state.categories.forEach((category) => {
     const categoryItems = getArticlesForCategory(category.id);
+    const catUnread = getUnreadCount(categoryItems);
+    const catTotal = categoryItems.length;
+
     const categoryItem = createNavigationItem({
       label: category.name,
-      count: getUnreadCount(categoryItems),
+      unread: catUnread,
+      total: catTotal,
       isActive: !state.showSavedItems && state.activeCategoryId === category.id,
       className: 'sidebar-category-item',
       onSelect: () => {
@@ -141,10 +170,15 @@ function renderFeedSidebar(onFeedSelection) {
     state.feeds
       .filter((feed) => feed.categoryId === category.id)
       .forEach((feed) => {
+        const feedItems = getArticlesForFeed(feed.id);
+        const feedUnread = getUnreadCount(feedItems);
+        const feedTotal = feedItems.length;
+
         feedsList.append(
           createNavigationItem({
             label: feed.name,
-            count: getUnreadCount(getArticlesForFeed(feed.id)),
+            unread: feedUnread,
+            total: feedTotal,
             isActive: !state.showSavedItems && state.activeFeedId === feed.id,
             className: 'sidebar-feed-item',
             onSelect: () => {
