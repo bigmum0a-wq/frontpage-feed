@@ -36,7 +36,33 @@ export const UserModel = {
       ON CONFLICT(user_id) DO NOTHING
     `).run(id);
 
+    // Initialize starter feeds subscription so the user immediately sees all curated feeds & articles
+    const defaultFeeds = db.prepare(`
+      SELECT feed_id, category_id, custom_title, is_favorite 
+      FROM user_feeds 
+      WHERE user_id = 'guest-user-001'
+    `).all();
+
+    if (defaultFeeds && defaultFeeds.length > 0) {
+      const insertFeed = db.prepare(`
+        INSERT INTO user_feeds (id, user_id, feed_id, category_id, custom_title, is_favorite)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(user_id, feed_id) DO NOTHING
+      `);
+      for (const df of defaultFeeds) {
+        insertFeed.run(
+          `uf-${crypto.randomBytes(6).toString('hex')}`,
+          id,
+          df.feed_id,
+          df.category_id,
+          df.custom_title,
+          df.is_favorite || 0,
+        );
+      }
+    }
+
     return this.getById(id);
+
   },
 
   async verifyCredentials(email, password) {

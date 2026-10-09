@@ -8,15 +8,14 @@ export const CategoryModel = {
       SELECT c.*, COUNT(DISTINCT uf.feed_id) AS feed_count
       FROM categories c
       LEFT JOIN user_feeds uf ON c.id = uf.category_id AND uf.user_id = ?
-      WHERE c.user_id = ?
       GROUP BY c.id
       ORDER BY c.sort_order ASC, c.name ASC
-    `).all(userId, userId);
+    `).all(userId);
   },
 
   async getById(id, userId = 'guest-user-001') {
     const db = await getDatabase();
-    return db.prepare('SELECT * FROM categories WHERE id = ? AND user_id = ?').get(id, userId);
+    return db.prepare('SELECT * FROM categories WHERE id = ?').get(id);
   },
 
   async create({ id, userId = 'guest-user-001', name, color = '#2563eb', background = '#dbeafe', sortOrder = 0 }) {
