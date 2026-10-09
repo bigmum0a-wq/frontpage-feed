@@ -35,11 +35,11 @@ INSERT OR IGNORE INTO feeds (id, url, site_url, title, description, format, init
 ('cloudflare-blog', 'https://blog.cloudflare.com/rss/', 'https://blog.cloudflare.com/', 'Cloudflare Blog', 'The official blog of Cloudflare.', 'rss2', 'CF', '#f38020'),
 ('vercel-blog', 'https://vercel.com/atom', 'https://vercel.com/blog', 'Vercel Blog', 'Frontend development and edge infrastructure updates.', 'atom', 'VB', '#000000'),
 ('github-blog', 'https://github.blog/feed/', 'https://github.blog/', 'The GitHub Blog', 'Updates, insights, and news from GitHub.', 'rss2', 'GH', '#24292e'),
-('netlify-blog', 'https://www.netlify.com/blog/index.xml', 'https://www.netlify.com/blog/', 'Netlify Blog', 'Modern web development, Jamstack, and developer experience.', 'rss2', 'NL', '#00ad9f'),
+('netlify-blog', 'https://www.netlify.com/feed.xml', 'https://www.netlify.com/blog/', 'Netlify Blog', 'Modern web development, Jamstack, and developer experience.', 'rss2', 'NL', '#00ad9f'),
 
 -- General Tech
 ('pragmatic-engineer', 'https://newsletter.pragmaticengineer.com/feed', 'https://newsletter.pragmaticengineer.com/', 'The Pragmatic Engineer', 'Big tech and high-growth startups, from the inside.', 'rss2', 'PE', '#3b82f6'),
-('hacker-news', 'https://hnrss.org/best', 'https://news.ycombinator.com/best', 'Hacker News Best', 'Highest-rated links and discussions on Hacker News.', 'rss2', 'HN', '#ff6600'),
+('hacker-news', 'https://hnrss.org/frontpage', 'https://news.ycombinator.com/best', 'Hacker News Best', 'Highest-rated links and discussions on Hacker News.', 'rss2', 'HN', '#ff6600'),
 
 -- AI & ML
 ('simon-willison', 'https://simonwillison.net/atom/everything/', 'https://simonwillison.net/', "Simon Willison's Weblog", 'Web development, Python, LLMs, and AI research notes.', 'atom', 'SW', '#7c3aed'),
@@ -49,10 +49,23 @@ INSERT OR IGNORE INTO feeds (id, url, site_url, title, description, format, init
 INSERT OR IGNORE INTO user_feeds (id, user_id, feed_id, category_id) VALUES
 ('uf-01', 'guest-user-001', 'smashing-magazine', 'frontend'),
 ('uf-02', 'guest-user-001', 'josh-comeau', 'frontend'),
-('uf-03', 'guest-user-001', 'figma-blog', 'design'),
-('uf-04', 'guest-user-001', 'cloudflare-blog', 'backend-devops'),
-('uf-05', 'guest-user-001', 'hacker-news', 'general-tech'),
-('uf-06', 'guest-user-001', 'simon-willison', 'ai-ml');
+('uf-03', 'guest-user-001', 'css-tricks', 'frontend'),
+('uf-04', 'guest-user-001', 'kent-c-dodds', 'frontend'),
+('uf-05', 'guest-user-001', 'web-dev', 'frontend'),
+('uf-06', 'guest-user-001', 'mdn-blog', 'frontend'),
+('uf-07', 'guest-user-001', 'figma-blog', 'design'),
+('uf-08', 'guest-user-001', 'sidebar-io', 'design'),
+('uf-09', 'guest-user-001', 'nngroup', 'design'),
+('uf-10', 'guest-user-001', 'alistapart', 'design'),
+('uf-11', 'guest-user-001', 'ux-collective', 'design'),
+('uf-12', 'guest-user-001', 'cloudflare-blog', 'backend-devops'),
+('uf-13', 'guest-user-001', 'vercel-blog', 'backend-devops'),
+('uf-14', 'guest-user-001', 'github-blog', 'backend-devops'),
+('uf-15', 'guest-user-001', 'netlify-blog', 'backend-devops'),
+('uf-16', 'guest-user-001', 'pragmatic-engineer', 'general-tech'),
+('uf-17', 'guest-user-001', 'hacker-news', 'general-tech'),
+('uf-18', 'guest-user-001', 'simon-willison', 'ai-ml'),
+('uf-19', 'guest-user-001', 'hugging-face', 'ai-ml');
 
 -- 5. Seed Initial Articles
 INSERT OR IGNORE INTO articles (id, feed_id, guid, url, title, excerpt, content, author, published_at) VALUES

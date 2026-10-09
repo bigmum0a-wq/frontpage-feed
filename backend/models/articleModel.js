@@ -1,15 +1,6 @@
 // Article Model
-import { createHash } from 'node:crypto';
+import crypto from 'node:crypto';
 import { getDatabase } from '../../config/database.js';
-
-/**
- * Generate a stable, collision-free article ID from feedId + guid.
- * Uses SHA-1 (first 16 hex chars) — not for security, just for uniqueness.
- */
-function makeArticleId(feedId, guid) {
-  const hash = createHash('sha1').update(`${feedId}::${guid}`).digest('hex').slice(0, 16);
-  return `art-${hash}`;
-}
 
 export const ArticleModel = {
   async getArticles(userId = 'guest-user-001', options = {}) {
@@ -177,12 +168,14 @@ export const ArticleModel = {
 
     let insertedCount = 0;
     for (const item of items) {
-      const guid = item.guid || item.url || item.title;
-      const articleId = makeArticleId(feedId, guid);
+      const rawKey = `${feedId}:${item.guid || item.url || item.title}`;
+      const hash = crypto.createHash('sha256').update(rawKey).digest('hex').slice(0, 16);
+      const articleId = `art-${feedId.slice(0, 15)}-${hash}`;
+
       insertStmt.run(
         articleId,
         feedId,
-        guid,
+        item.guid || item.url,
         item.url,
         item.title,
         item.excerpt || null,
@@ -193,6 +186,7 @@ export const ArticleModel = {
       );
       insertedCount += 1;
     }
+
 
     return insertedCount;
   },
