@@ -111,15 +111,15 @@ export function renderLandingPage() {
               <form class="hero-auth-form" id="hero-register-form">
                 <div class="hero-field">
                   <label for="hero-reg-name">Full name</label>
-                  <input type="text" id="hero-reg-name" placeholder="Ada Lovelace" required>
+                  <input type="text" id="hero-reg-name" placeholder="Ada Lovelace" autocomplete="name" required>
                 </div>
                 <div class="hero-field">
                   <label for="hero-reg-email">Email address</label>
-                  <input type="email" id="hero-reg-email" placeholder="ada@example.com" required>
+                  <input type="email" id="hero-reg-email" placeholder="ada@example.com" autocomplete="email" required>
                 </div>
                 <div class="hero-field">
                   <label for="hero-reg-password">Password</label>
-                  <input type="password" id="hero-reg-password" placeholder="Minimum 6 characters" minlength="6" required>
+                  <input type="password" id="hero-reg-password" placeholder="Minimum 6 characters" minlength="6" autocomplete="new-password" required>
                 </div>
                 <div class="hero-form-error" id="hero-reg-error" hidden></div>
                 <button type="submit" class="btn btn-primary btn-lg btn-block" id="hero-reg-submit">
@@ -134,11 +134,11 @@ export function renderLandingPage() {
               <form class="hero-auth-form" id="hero-login-form">
                 <div class="hero-field">
                   <label for="hero-login-email">Email address</label>
-                  <input type="email" id="hero-login-email" placeholder="ada@example.com" required>
+                  <input type="email" id="hero-login-email" placeholder="ada@example.com" autocomplete="email" required>
                 </div>
                 <div class="hero-field">
                   <label for="hero-login-password">Password</label>
-                  <input type="password" id="hero-login-password" placeholder="Your password" required>
+                  <input type="password" id="hero-login-password" placeholder="Your password" autocomplete="current-password" required>
                 </div>
                 <div class="hero-form-error" id="hero-login-error" hidden></div>
                 <button type="submit" class="btn btn-primary btn-lg btn-block" id="hero-login-submit">

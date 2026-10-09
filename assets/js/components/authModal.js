@@ -88,12 +88,12 @@ export function openAuthModal({ initialTab = 'login', onComplete = null } = {}) 
 
           <div class="auth-field">
             <label for="reset-email">Email Address</label>
-            <input type="email" id="reset-email" required placeholder="you@domain.com">
+            <input type="email" id="reset-email" required placeholder="you@domain.com" autocomplete="email">
           </div>
 
           <div class="auth-field">
             <label for="reset-new-password">New Password</label>
-            <input type="password" id="reset-new-password" required minlength="6" placeholder="New password (min 6 characters)">
+            <input type="password" id="reset-new-password" required minlength="6" placeholder="New password (min 6 characters)" autocomplete="new-password">
           </div>
 
           <button type="submit" class="btn btn-primary auth-submit-btn">Update Password</button>
