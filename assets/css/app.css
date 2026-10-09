@@ -9,8 +9,17 @@
    1. GLOBAL RESET
 ========================================================= */
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+}
+
 html {
     scroll-behavior: smooth;
+    scrollbar-width: thin;
 }
 
 body {
@@ -1296,7 +1305,7 @@ svg {
     font-size: var(--text-xs);
 }
 
-.profile-section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+.profile-section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); margin-top: 2rem ; }
 .profile-section-heading h2 { margin: 0; font-size: var(--text-lg); }
 .profile-section-heading p { margin: var(--space-1) 0 0; color: var(--color-text-secondary); font-size: var(--text-sm); }
 .profile-section-heading > span { color: var(--color-text-secondary); font-size: var(--text-sm); }
@@ -1357,6 +1366,27 @@ svg {
     .profile-stats article:nth-child(2) { border-right: 0; }
     .profile-stats article:nth-child(-n + 2) { border-bottom: 1px solid var(--color-border); }
     .profile-library-summary { flex-direction: column; }
+}
+
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+}
+
+.profile-stats article{
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    width: 16rem;
+
+}
+
+.profile-stats article>span {
+    display: block;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
 }
 
 /* Settings content */
