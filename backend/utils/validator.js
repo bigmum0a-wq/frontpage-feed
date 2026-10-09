@@ -41,3 +41,35 @@ export function decodeHtmlEntities(str) {
     .replace(/&#8221;/g, '”')
     .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(code));
 }
+
+/**
+ * Server-side HTML sanitizer for RSS/Atom article bodies.
+ * Strips executable scripts, event handlers, and dangerous tags, while allowing
+ * safe typography, structure, links, and media.
+ */
+export function sanitizeHtml(dirtyHtml) {
+  if (!dirtyHtml || typeof dirtyHtml !== 'string') return '';
+
+  let html = dirtyHtml;
+
+  // 1. Remove dangerous blocks: script, style, iframe, object, embed, form, input, base, link
+  html = html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+    .replace(/<object[\s\S]*?<\/object>/gi, '')
+    .replace(/<embed[\s\S]*?<\/embed>/gi, '')
+    .replace(/<form[\s\S]*?<\/form>/gi, '')
+    .replace(/<base[^>]*>/gi, '')
+    .replace(/<link[^>]*>/gi, '')
+    .replace(/<meta[^>]*>/gi, '');
+
+  // 2. Remove inline event handlers (onload, onclick, onerror, etc.)
+  html = html.replace(/\s+on[a-z]+\s*=\s*(["'][^"']*["']|[^\s>]+)/gi, '');
+
+  // 3. Disallow javascript: and data: pseudo-protocols in href and src
+  html = html.replace(/\s+(href|src)\s*=\s*["']\s*(?:javascript|data|vbscript):[^"']*["']/gi, ' $1="#"');
+
+  return html.trim();
+}
+

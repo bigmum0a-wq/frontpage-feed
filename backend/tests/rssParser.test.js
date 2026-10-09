@@ -71,3 +71,28 @@ test('RSS Parser: handles invalid or empty XML cleanly', () => {
     parseFeedXml('');
   }, /Contenu XML vide ou invalide/);
 });
+
+test('RSS Parser: sanitizes malicious script tags and event handlers from feed HTML', () => {
+  const maliciousRss = `<?xml version="1.0" encoding="UTF-8"?>
+  <rss version="2.0">
+    <channel>
+      <title>Hacker Feed</title>
+      <link>https://evil.com</link>
+      <item>
+        <title>Exploit Demo</title>
+        <link>https://evil.com/xss</link>
+        <content:encoded><![CDATA[<p>Hello <script>alert(localStorage.getItem('token'))</script><img src="x" onerror="steal()" /><a href="javascript:alert(1)">Click me</a> Safe paragraph.</p>]]></content:encoded>
+      </item>
+    </channel>
+  </rss>`;
+
+  const result = parseFeedXml(maliciousRss);
+  const content = result.items[0].content;
+
+  assert.equal(content.includes('<script>'), false, 'Script tags must be stripped');
+  assert.equal(content.includes('alert('), false, 'Script payload must be stripped');
+  assert.equal(content.includes('onerror='), false, 'Inline event handlers must be stripped');
+  assert.equal(content.includes('javascript:'), false, 'Javascript pseudo-protocol must be disarmed');
+  assert.equal(content.includes('Safe paragraph.'), true, 'Legitimate content must be preserved');
+});
+

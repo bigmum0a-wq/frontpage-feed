@@ -44,15 +44,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   applySavedPreferences();
   initialiseNetworkMonitoring();
 
-  // Register Service Worker for Offline-First capability
+  // Register Service Worker for Offline-First capability (relative for sub-path hosting support like GitHub Pages)
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-      .register('/sw.js')
+      .register('sw.js')
       .then((reg) => {
-        console.log('FrontPage ServiceWorker actif :', reg.scope);
+        console.log('FrontPage ServiceWorker active:', reg.scope);
       })
       .catch((err) => {
-        console.warn('Échec enregistrement ServiceWorker :', err);
+        console.warn('ServiceWorker registration failed:', err);
       });
   }
   

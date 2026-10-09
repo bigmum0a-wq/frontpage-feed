@@ -17,6 +17,7 @@ import {
   exportToWallabag,
   downloadArticleMarkdown,
 } from '../services/exportService.js';
+import { sanitizeHtml } from '../utils/sanitize.js';
 
 function getReaderDialog() {
   let dialog = document.querySelector('#article-reader');
@@ -246,11 +247,11 @@ export function openArticleReader(article) {
   aiContainer.className = 'reader-ai-wrapper';
   renderAiSummaryBlock(article, aiContainer);
 
-  // Body HTML
+  // Body HTML (Sanitized against XSS)
   const bodyText = document.createElement('div');
   bodyText.className = 'reader-body';
   if (article.content && article.content.trim()) {
-    bodyText.innerHTML = article.content;
+    bodyText.innerHTML = sanitizeHtml(article.content);
   } else {
     bodyText.innerHTML = `<p class="reader-excerpt-lead">${article.excerpt || 'No text content available.'}</p>`;
   }

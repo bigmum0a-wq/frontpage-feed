@@ -3,7 +3,11 @@ import crypto from 'node:crypto';
 import { env } from '../../config/environment.js';
 
 const SCRIPT_KEY_LEN = 64;
-const TOKEN_SECRET = env.SESSION_SECRET || 'frontpage-secure-auth-secret-key-2026';
+const TOKEN_SECRET = env.SESSION_SECRET;
+
+if (!TOKEN_SECRET) {
+  throw new Error('SESSION_SECRET is required to initialize authService.');
+}
 
 // Set of explicitly revoked tokens
 const revokedTokens = new Set();

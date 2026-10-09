@@ -1,9 +1,9 @@
 {
   "name": "FrontPage - RSS & Atom Feed Reader",
   "short_name": "FrontPage",
-  "description": "Agrégateur moderne et performant de flux RSS/Atom avec mode hors-ligne et synchronisation temps réel.",
-  "start_url": "/#feed",
-  "scope": "/",
+  "description": "Modern high-craft RSS & Atom feed reader with offline PWA support and intelligent synthesis.",
+  "start_url": "./#feed",
+  "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#090d16",
@@ -25,19 +25,19 @@
   ],
   "shortcuts": [
     {
-      "name": "Tous les articles",
-      "url": "/#feed",
-      "description": "Consulter vos flux d'actualité"
+      "name": "All items",
+      "url": "./#feed",
+      "description": "Browse all latest articles"
     },
     {
-      "name": "Briefing Digest",
-      "url": "/#digest",
-      "description": "Consulter votre synthèse quotidienne"
+      "name": "Digest",
+      "url": "./#digest",
+      "description": "Read daily briefings"
     },
     {
-      "name": "Découvrir",
-      "url": "/#discover",
-      "description": "Trouver de nouvelles sources"
+      "name": "Discover",
+      "url": "./#discover",
+      "description": "Discover new feed sources"
     }
   ]
 }

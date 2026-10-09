@@ -1,5 +1,5 @@
 // RSS 2.0, Atom 1.0, and RSS 1.0 / RDF Feed Parser
-import { decodeHtmlEntities, normalizeDate } from '../utils/validator.js';
+import { decodeHtmlEntities, normalizeDate, sanitizeHtml } from '../utils/validator.js';
 
 function extractCDataOrText(xmlSnippet, tagName) {
   if (!xmlSnippet) return '';
@@ -75,7 +75,7 @@ function parseRssFeed(xml) {
     if (!imageUrl) imageUrl = extractAttr(itemXml, 'media:thumbnail', 'url');
     if (!imageUrl) imageUrl = extractFirstImage(encodedContent || descriptionText);
 
-    const fullContent = encodedContent || descriptionText;
+    const fullContent = sanitizeHtml(encodedContent || descriptionText);
     const excerpt = stripHtml(descriptionText || encodedContent).slice(0, 300);
 
     items.push({
@@ -123,13 +123,14 @@ function parseAtomFeed(xml) {
     if (!imageUrl) imageUrl = extractFirstImage(content || summary);
 
     const excerpt = stripHtml(summary || content).slice(0, 300);
+    const fullContent = sanitizeHtml(content || summary);
 
     entries.push({
       guid: id,
       title: entryTitle,
       url: link,
       excerpt,
-      content,
+      content: fullContent,
       author,
       imageUrl,
       publishedAt: normalizeDate(published),

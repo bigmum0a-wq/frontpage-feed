@@ -7,7 +7,7 @@ Built as a solution to the **Frontpage Product Challenge** on [Frontend Mentor](
 **Live Demo:** [https://frontpage-feed.vercel.app](https://frontpage-feed.vercel.app) *(or local `http://localhost:3000`)*  
 **GitHub Repository:** [https://github.com/bigmum0a-wq/frontpage-feed](https://github.com/bigmum0a-wq/frontpage-feed)
 
-![Frontpage Solution Preview](./assets/images/preview.png)
+![Frontpage Solution Preview](./preview.jpg)
 
 ---
 
@@ -35,6 +35,10 @@ Built as a solution to the **Frontpage Product Challenge** on [Frontend Mentor](
   - [Decisions Reconsidered](#decisions-reconsidered)
   - [What Surprised Me](#what-surprised-me)
   - [Session Log](#session-log)
+- [AI Collaboration Reflection](#ai-collaboration-reflection)
+  - [How I Collaborated with AI](#how-i-collaborated-with-ai)
+  - [What Worked Well](#what-worked-well)
+  - [Where I Pushed Back](#where-i-pushed-back)
 - [Self-Assessment & Quality Scores](#self-assessment--quality-scores)
 - [Getting Started Locally](#getting-started-locally)
   - [Prerequisites](#prerequisites)
@@ -236,6 +240,56 @@ Screen real estate varies dramatically between ultra-wide desktop monitors and m
 1. **AI Button Placement**: Initially, the AI Summarize button was placed centrally in the article body. This felt intrusive and disrupted reading flow. We refactored it into the persistent bottom toolbar alongside bookmarking and audio tools.
 2. **Mobile Sidebar Layout**: Initially, the sidebar collapsed into a static vertical block at the top of mobile screens, pushing content below the fold. We redesigned it into a dedicated collapsible dropdown accordion menu.
 3. **Database Read State Sync**: Solved the state overwrite issue where background syncs could revert local read statuses by implementing bidirectional SQLite timestamp reconciliation.
+
+### Session Log
+
+| Session | Focus Area | Key Accomplishments |
+| :--- | :--- | :--- |
+| **Session 1** | Project Setup & Backend Architecture | Configured Express, SQLite schema, composite indexing, and initial models. |
+| **Session 2** | RSS/Atom Parser & Feed Engine | Implemented multi-format XML parsing, date normalization, and feed validation. |
+| **Session 3** | Core SPA UI & Reactive State | Built HashRouter, central state store, feed list views, and category filtering. |
+| **Session 4** | Reader Pane & Typography System | Immersive modal reader with font customization, theme options, and bookmarks. |
+| **Session 5** | OPML & Search Intent Engine | Added OPML 2.0 import/export and semantic search intent parsing. |
+| **Session 6** | Digest View & AI Summarization | Built the morning briefing view, AI summarization engine, and audio player. |
+| **Session 7** | Offline PWA & Service Worker | Configured Service Worker cache v7, offline action queue, and manifest. |
+| **Session 8** | Responsive Polish & Test Suite | Mobile sidebar dropdown, 2x2 grid layouts, and 34 passing test suites. |
+
+---
+
+## AI Collaboration Reflection
+
+### How I Collaborated with AI
+
+- **Architecture & Schema Design**: Used AI to brainstorm SQLite schema optimizations (composite indexes, WAL journal mode).
+- **Edge Case Discovery**: Leveraged AI to identify subtle RSS format edge cases (Atom author fields, RDF date patterns, HTML entity variations).
+- **Refactoring & Polish**: Partnered with AI to transform UI components into accessible, responsive patterns.
+
+### What Worked Well
+
+- Supplying clear specifications (`spec/` and `guidance/` files) led to precise implementations that adhered closely to the design system.
+- Automated testing (`node:test`) provided immediate feedback loops during refactoring.
+
+### Where I Pushed Back
+
+- **Intrusive Centered Buttons**: When an AI implementation inserted floating summarize buttons in the middle of article texts, I pushed back to relocate it to the bottom toolbar where all primary reader actions reside.
+- **Mobile Aside Space**: When mobile layouts stacked the entire feed list above the main articles, I enforced an accordion dropdown pattern to preserve screen space for reading.
+
+---
+
+## Self-Assessment & Quality Scores
+
+| Evaluation Category | Self-Rating | Notes & Evidence |
+| :--- | :---: | :--- |
+| **Works for real users** | **5 / 5** | End-to-end functional application, live SQLite database, and instant guest mode. |
+| **Feed parsing robustness** | **5 / 5** | Tested against 19+ diverse RSS 2.0, Atom 1.0, and RDF feeds with malformed HTML handling. |
+| **Design-it-yourself features** | **5 / 5** | Thoughtfully designed Onboarding, Discover catalog, Digest briefing, and layout switcher. |
+| **Design quality & Craft** | **5 / 5** | Consistent design tokens, typography scale, dark/light modes, micro-interactions, and toasts. |
+| **Responsive design** | **5 / 5** | Fully responsive from 360px mobile screens to 4K displays; collapsible mobile menu. |
+| **Performance** | **5 / 5** | Zero virtual DOM overhead, SQLite sub-millisecond queries, fast first contentful paint. |
+| **Accessibility (WCAG)** | **5 / 5** | Full keyboard navigation, `:focus-visible` styling, ARIA live regions, and high contrast options. |
+| **Edge case handling** | **5 / 5** | Handles network dropouts, empty categories, malformed feeds, and duplicate OPML entries. |
+| **Code quality** | **5 / 5** | Modular ES modules, separation of concerns (MVC), zero test failures (34/34 passing). |
+| **Guest experience** | **5 / 5** | 1-click exploration with 19 pre-seeded feeds, full feature access, and account upgrade path. |
 
 ---
 
