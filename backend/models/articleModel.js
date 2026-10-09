@@ -15,6 +15,41 @@ export const ArticleModel = {
       offset = 0,
     } = options;
 
+    let whereConditions = '';
+    const filterParams = [];
+
+    if (feedId) {
+      whereConditions += ' AND a.feed_id = ?';
+      filterParams.push(feedId);
+    }
+
+    if (categoryId && categoryId !== 'all') {
+      whereConditions += ' AND uf.category_id = ?';
+      filterParams.push(categoryId);
+    }
+
+    if (isSaved === true || isSaved === 'true') {
+      whereConditions += ' AND ua.is_saved = 1';
+    }
+
+    if (search && search.trim()) {
+      whereConditions += ' AND (a.title LIKE ? OR a.excerpt LIKE ? OR a.author LIKE ? OR a.ai_tags LIKE ?)';
+      const term = `%${search.trim()}%`;
+      filterParams.push(term, term, term, term);
+    }
+
+    const countSql = `
+      SELECT COUNT(DISTINCT a.id) AS total
+      FROM articles a
+      JOIN feeds f ON a.feed_id = f.id
+      JOIN user_feeds uf ON f.id = uf.feed_id AND uf.user_id = ?
+      LEFT JOIN categories c ON uf.category_id = c.id
+      LEFT JOIN user_articles ua ON a.id = ua.article_id AND ua.user_id = ?
+      WHERE 1=1 ${whereConditions}
+    `;
+    const countRow = db.prepare(countSql).get(userId, userId, ...filterParams);
+    const totalCount = countRow?.total || 0;
+
     let query = `
       SELECT 
         a.id,
@@ -46,40 +81,19 @@ export const ArticleModel = {
       JOIN user_feeds uf ON f.id = uf.feed_id AND uf.user_id = ?
       LEFT JOIN categories c ON uf.category_id = c.id
       LEFT JOIN user_articles ua ON a.id = ua.article_id AND ua.user_id = ?
-      WHERE 1=1
+      WHERE 1=1 ${whereConditions}
     `;
-
-    const params = [userId, userId];
-
-    if (feedId) {
-      query += ' AND a.feed_id = ?';
-      params.push(feedId);
-    }
-
-    if (categoryId && categoryId !== 'all') {
-      query += ' AND uf.category_id = ?';
-      params.push(categoryId);
-    }
-
-    if (isSaved === true || isSaved === 'true') {
-      query += ' AND ua.is_saved = 1';
-    }
-
-    if (search && search.trim()) {
-      query += ' AND (a.title LIKE ? OR a.excerpt LIKE ? OR a.author LIKE ? OR a.ai_tags LIKE ?)';
-      const term = `%${search.trim()}%`;
-      params.push(term, term, term, term);
-    }
 
     query += sortOrder === 'oldest' 
       ? ' ORDER BY a.published_at ASC' 
       : ' ORDER BY a.published_at DESC';
 
     query += ' LIMIT ? OFFSET ?';
-    params.push(limit, offset);
 
-    const rows = db.prepare(query).all(...params);
-    return rows.map((row) => formatArticleRow(row));
+    const rows = db.prepare(query).all(userId, userId, ...filterParams, limit, offset);
+    const result = rows.map((row) => formatArticleRow(row));
+    result.total = totalCount;
+    return result;
   },
 
   async getById(articleId, userId = 'guest-user-001') {

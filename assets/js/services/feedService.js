@@ -1,8 +1,9 @@
-import { addFeed, getCategoryById, state } from '../state.js';
+import { addFeed, getCategoryById, resetToGuestSampleLibrary, state } from '../state.js';
 import { MAX_FEED_NAME_LENGTH } from '../utils/constants.js';
 import { createInitials } from '../utils/helpers.js';
 import { sanitizeFeedUrl, sanitizeText } from '../utils/sanitize.js';
 import { api } from './apiService.js';
+import { isGuestUser } from './authService.js';
 
 export function validateFeedDetails({ name, url, categoryId }) {
   const safeName = sanitizeText(name);
@@ -46,11 +47,18 @@ export async function addFeedRemote(feedDetails) {
 }
 
 export async function syncFeedsWithServer() {
+  if (isGuestUser()) {
+    // Guest Mode: strictly maintain the lightweight sample preview dataset
+    resetToGuestSampleLibrary();
+    window.dispatchEvent(new CustomEvent('frontpage:feed-change'));
+    return true;
+  }
+
   try {
     const [categoriesRes, feedsRes, articlesRes] = await Promise.all([
       api.get('/categories').catch(() => null),
       api.get('/feeds').catch(() => null),
-      api.get('/articles').catch(() => null),
+      api.get('/articles?limit=100&offset=0').catch(() => null),
     ]);
 
     if (categoriesRes?.success && Array.isArray(categoriesRes.data) && categoriesRes.data.length > 0) {
@@ -75,6 +83,7 @@ export async function syncFeedsWithServer() {
     }
 
     if (articlesRes?.success && Array.isArray(articlesRes.data) && articlesRes.data.length > 0) {
+      state.totalArticlesCount = articlesRes.total || articlesRes.data.length;
       state.articles = articlesRes.data.map((a) => {
         const localArticle = state.articles.find((item) => item.id === a.id);
         const isRead = localArticle !== undefined ? localArticle.isRead : Boolean(a.isRead);
@@ -102,6 +111,44 @@ export async function syncFeedsWithServer() {
     return true;
   } catch (err) {
     console.warn('Sync serveur ignorée (mode hors-ligne):', err.message);
+    return false;
+  }
+}
+
+export async function loadMoreArticles() {
+  if (isGuestUser()) return false;
+  const currentOffset = state.articles.length;
+  try {
+    const articlesRes = await api.get(`/articles?limit=100&offset=${currentOffset}`);
+    if (articlesRes?.success && Array.isArray(articlesRes.data) && articlesRes.data.length > 0) {
+      state.totalArticlesCount = articlesRes.total || (currentOffset + articlesRes.data.length);
+      const existingIds = new Set(state.articles.map((item) => item.id));
+      const newArticles = articlesRes.data
+        .filter((a) => !existingIds.has(a.id))
+        .map((a) => ({
+          id: a.id,
+          feedId: a.feedId || a.feed_id,
+          title: a.title,
+          excerpt: a.excerpt,
+          content: a.content,
+          author: a.author,
+          imageUrl: a.imageUrl || a.image_url,
+          publishedAt: a.publishedAt || a.published_at,
+          isRead: Boolean(a.isRead),
+          isSaved: Boolean(a.isSaved),
+          aiSummary: a.aiSummary,
+          aiTakeaways: a.aiTakeaways,
+          aiTags: a.aiTags,
+          aiReadingTime: a.aiReadingTime,
+        }));
+
+      state.articles = [...state.articles, ...newArticles];
+      window.dispatchEvent(new CustomEvent('frontpage:feed-change'));
+      return newArticles.length > 0;
+    }
+    return false;
+  } catch (err) {
+    console.warn('Failed to load more articles:', err.message);
     return false;
   }
 }

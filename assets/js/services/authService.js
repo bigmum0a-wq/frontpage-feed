@@ -1,6 +1,5 @@
-// assets/js/services/authService.js
 import { api } from './apiService.js';
-import { state } from '../state.js';
+import { resetToGuestSampleLibrary, state } from '../state.js';
 import { showToast } from '../components/toast.js';
 
 const TOKEN_KEY = 'frontpage_auth_token';
@@ -134,6 +133,7 @@ export async function logoutUser() {
       is_guest: 1,
     };
     setCurrentUser(guestUser);
+    resetToGuestSampleLibrary();
     notifyAuthChange(guestUser, true);
     showToast('You have been signed out. Continuing in Guest mode.', 'info');
   }

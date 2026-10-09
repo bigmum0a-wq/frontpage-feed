@@ -17,7 +17,17 @@ export const ArticleController = {
         offset: offset ? parseInt(offset, 10) : 0,
       });
 
-      res.json({ success: true, count: articles.length, data: articles });
+      const parsedOffset = offset ? parseInt(offset, 10) : 0;
+      const total = articles.total ?? articles.length;
+
+      res.json({
+        success: true,
+        count: articles.length,
+        total,
+        offset: parsedOffset,
+        hasMore: (parsedOffset + articles.length) < total,
+        data: articles,
+      });
     } catch (error) {
       next(error);
     }

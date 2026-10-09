@@ -1,7 +1,7 @@
 import { renderFeedList } from '../components/feedList.js';
 import { openArticleReader } from '../components/reader.js';
 import { showToast } from '../components/toast.js';
-import { syncFeedsWithServer } from '../services/feedService.js';
+import { syncFeedsWithServer, loadMoreArticles } from '../services/feedService.js';
 import { isGuestUser } from '../services/authService.js';
 import { openAuthModal } from '../components/authModal.js';
 import {
@@ -120,20 +120,28 @@ export function renderFeedView(onArticleRead) {
 
   const visibleArticles = getVisibleArticles();
   const unreadArticles = getUnreadCount(visibleArticles);
+  const isGuest = isGuestUser();
 
   feedTitle.textContent = getFeedTitle();
   unreadCount.textContent = `${unreadArticles} unread`;
-  newItemsCount.textContent = state.searchQuery.trim()
-    ? `${visibleArticles.length} result${visibleArticles.length === 1 ? '' : 's'} for “${state.searchQuery.trim()}”`
-    : unreadArticles
-    ? `${unreadArticles} new ${unreadArticles === 1 ? 'item' : 'items'} to read`
-    : 'You are all caught up.';
+
+  if (isGuest) {
+    newItemsCount.textContent = `${visibleArticles.length} sample preview ${visibleArticles.length === 1 ? 'article' : 'articles'} (Guest mode)`;
+  } else if (state.searchQuery.trim()) {
+    newItemsCount.textContent = `${visibleArticles.length} result${visibleArticles.length === 1 ? '' : 's'} for “${state.searchQuery.trim()}”`;
+  } else if (state.totalArticlesCount && state.totalArticlesCount > visibleArticles.length) {
+    newItemsCount.textContent = `Showing ${visibleArticles.length} of ${state.totalArticlesCount.toLocaleString()} articles in database`;
+  } else if (unreadArticles) {
+    newItemsCount.textContent = `${unreadArticles} new ${unreadArticles === 1 ? 'item' : 'items'} to read`;
+  } else {
+    newItemsCount.textContent = 'You are all caught up.';
+  }
 
   // Show polite Guest Onboarding Banner if in guest mode
   const guestBanner = document.querySelector('#feed-guest-banner');
   if (guestBanner) {
     const isDismissed = sessionStorage.getItem('frontpage_dismiss_guest_banner') === 'true';
-    if (isGuestUser() && !isDismissed) {
+    if (isGuest && !isDismissed) {
       guestBanner.hidden = false;
       guestBanner.querySelector('.btn-guest-banner-signup')?.addEventListener('click', () => {
         openAuthModal({ initialTab: 'register' });
@@ -164,6 +172,55 @@ export function renderFeedView(onArticleRead) {
       onArticleRead?.();
     },
   });
+
+  // Handle Load More pagination for authenticated users
+  let paginationContainer = document.querySelector('#feed-pagination');
+  if (!paginationContainer && articlesContainer.parentNode) {
+    paginationContainer = document.createElement('div');
+    paginationContainer.id = 'feed-pagination';
+    paginationContainer.className = 'feed-pagination';
+    paginationContainer.style.cssText = 'text-align: center; margin: 2rem 0; padding-bottom: 2rem;';
+    articlesContainer.parentNode.insertBefore(paginationContainer, articlesContainer.nextSibling);
+  }
+
+  if (paginationContainer) {
+    const canLoadMore = !isGuest && !state.searchQuery.trim() && !state.showSavedItems && state.articles.length < (state.totalArticlesCount || 0);
+
+    if (canLoadMore) {
+      paginationContainer.hidden = false;
+      paginationContainer.innerHTML = `
+        <button type="button" class="btn btn-secondary btn-lg" id="btn-load-more" style="min-width: 220px; font-weight: 500;">
+          <span>Load more articles</span>
+        </button>
+        <p class="pagination-info" style="color: var(--text-muted, #64748b); font-size: 0.875rem; margin-top: 0.5rem;">
+          Showing ${visibleArticles.length} of ${(state.totalArticlesCount || visibleArticles.length).toLocaleString()} articles in database
+        </p>
+      `;
+
+      const loadMoreBtn = paginationContainer.querySelector('#btn-load-more');
+      loadMoreBtn?.addEventListener('click', async () => {
+        loadMoreBtn.disabled = true;
+        const label = loadMoreBtn.querySelector('span');
+        if (label) label.textContent = 'Loading more articles...';
+        try {
+          const loaded = await loadMoreArticles();
+          if (loaded) {
+            showToast('Additional articles loaded from database', 'info');
+          } else {
+            showToast('All articles have been loaded', 'info');
+          }
+        } catch {
+          showToast('Failed to load more articles', 'error');
+        } finally {
+          renderFeedView(onArticleRead);
+          onArticleRead?.();
+        }
+      });
+    } else {
+      paginationContainer.hidden = true;
+      paginationContainer.innerHTML = '';
+    }
+  }
 
   [listButton, gridButton].forEach((button) => {
     if (!button) {

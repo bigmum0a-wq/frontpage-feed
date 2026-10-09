@@ -13,122 +13,130 @@ const categories = [
   { id: 'ai-ml', name: 'AI & ML', color: '#7c3aed', background: '#ede9fe' },
 ];
 
-const feeds = [
-  {
-    id: 'smashing-magazine',
-    name: 'Smashing Magazine',
-    categoryId: 'frontend',
-    initials: 'S',
-    color: '#e53e3e',
-  },
-  {
-    id: 'josh-comeau',
-    name: 'Josh W. Comeau',
-    categoryId: 'frontend',
-    initials: 'J',
-    color: '#5b5ce2',
-  },
-  {
-    id: 'figma-blog',
-    name: 'Figma Blog',
-    categoryId: 'design',
-    initials: 'F',
-    color: '#f24e1e',
-  },
-  {
-    id: 'cloudflare-blog',
-    name: 'Cloudflare Blog',
-    categoryId: 'backend-devops',
-    initials: 'C',
-    color: '#f38020',
-  },
-  {
-    id: 'hacker-news',
-    name: 'Hacker News Best',
-    categoryId: 'general-tech',
-    initials: 'Y',
-    color: '#ff6600',
-  },
-  {
-    id: 'simon-willison',
-    name: "Simon Willison's Weblog",
-    categoryId: 'ai-ml',
-    initials: 'S',
-    color: '#7c3aed',
-  },
+export const sampleFeeds = [
+  // Frontend
+  { id: 'smashing-magazine', name: 'Smashing Magazine', categoryId: 'frontend', initials: 'SM', color: '#e53e3e' },
+  { id: 'josh-comeau', name: 'Josh W. Comeau', categoryId: 'frontend', initials: 'JC', color: '#5b5ce2' },
+  // Design
+  { id: 'figma-blog', name: 'Figma Blog', categoryId: 'design', initials: 'FB', color: '#f24e1e' },
+  { id: 'sidebar-io', name: 'Sidebar.io', categoryId: 'design', initials: 'SB', color: '#ee5a24' },
+  // Backend & DevOps
+  { id: 'cloudflare-blog', name: 'Cloudflare Blog', categoryId: 'backend-devops', initials: 'CF', color: '#f38020' },
+  { id: 'vercel-blog', name: 'Vercel Blog', categoryId: 'backend-devops', initials: 'VB', color: '#000000' },
+  // General Tech
+  { id: 'hacker-news', name: 'Hacker News Best', categoryId: 'general-tech', initials: 'HN', color: '#ff6600' },
+  { id: 'pragmatic-engineer', name: 'The Pragmatic Engineer', categoryId: 'general-tech', initials: 'PE', color: '#3b82f6' },
+  // AI & ML
+  { id: 'simon-willison', name: "Simon Willison's Weblog", categoryId: 'ai-ml', initials: 'SW', color: '#7c3aed' },
+  { id: 'hugging-face', name: 'Hugging Face Blog', categoryId: 'ai-ml', initials: 'HF', color: '#ffd21e' },
 ];
 
-const articles = [
+export const sampleArticles = [
+  // Frontend
   {
-    id: 'designing-for-colorblind-users',
+    id: 'sample-colorblind-users',
     feedId: 'smashing-magazine',
     title: 'Practical Guide to Designing for Colorblind Users',
-    excerpt:
-      "Color blindness affects roughly 8% of men and 0.5% of women worldwide. Here's how to design interfaces that work for everyone.",
+    excerpt: "Color blindness affects roughly 8% of men and 0.5% of women worldwide. Here's how to design interfaces that work for everyone.",
     publishedAt: '2026-09-05T08:00:00Z',
     isRead: false,
     isSaved: false,
   },
   {
-    id: 'edge-first-caching',
-    feedId: 'cloudflare-blog',
-    title: 'How We Reduced P99 Latency by 60% with Edge-First Caching',
-    excerpt:
-      'Our engineering team spent the last quarter rethinking how we cache at the edge, with dramatic results for customers.',
-    publishedAt: '2026-09-05T07:00:00Z',
-    isRead: false,
-    isSaved: true,
-  },
-  {
-    id: 'effective-rag-systems',
-    feedId: 'simon-willison',
-    title: 'Building Effective RAG Systems: What Actually Works in Production',
-    excerpt:
-      "After months of experimenting with retrieval-augmented generation, here's what I have learned about making systems reliable.",
-    publishedAt: '2026-09-05T06:00:00Z',
-    isRead: false,
-    isSaved: false,
-  },
-  {
-    id: 'css-container-queries',
+    id: 'sample-container-queries',
     feedId: 'josh-comeau',
     title: 'The Surprising Truth About CSS Container Queries',
-    excerpt:
-      'Container queries have been available for a while, but most developers are still using them like media queries.',
+    excerpt: 'Container queries have been available for a while, but most developers are still using them like media queries.',
     publishedAt: '2026-09-05T05:00:00Z',
     isRead: false,
     isSaved: false,
   },
+  // Design
   {
-    id: 'figma-variables',
+    id: 'sample-figma-variables',
     feedId: 'figma-blog',
     title: 'Introducing Variables 2.0: Design Tokens Meet Real Logic',
-    excerpt:
-      'Variables now support conditional logic, mathematical expressions, and cross-file references for richer design systems.',
+    excerpt: 'Variables now support conditional logic, mathematical expressions, and cross-file references for richer design systems.',
     publishedAt: '2026-09-05T04:00:00Z',
     isRead: true,
     isSaved: false,
   },
   {
-    id: 'thoughtful-rss',
+    id: 'sample-design-systems-scale',
+    feedId: 'sidebar-io',
+    title: 'Design Systems at Scale: Component Architecture Principles',
+    excerpt: 'How leading design teams structure design tokens, component libraries, and accessibility contracts for multi-brand apps.',
+    publishedAt: '2026-09-04T12:00:00Z',
+    isRead: false,
+    isSaved: false,
+  },
+  // Backend & DevOps
+  {
+    id: 'sample-edge-first-caching',
+    feedId: 'cloudflare-blog',
+    title: 'How We Reduced P99 Latency by 60% with Edge-First Caching',
+    excerpt: 'Our engineering team spent the last quarter rethinking how we cache at the edge, with dramatic results for customers.',
+    publishedAt: '2026-09-05T07:00:00Z',
+    isRead: false,
+    isSaved: true,
+  },
+  {
+    id: 'sample-server-components-ttfb',
+    feedId: 'vercel-blog',
+    title: 'Streaming Server Components: Architecting Ultra-Fast TTFB',
+    excerpt: 'How progressive hydration and parallel edge streaming deliver instantaneous first contentful paint across the globe.',
+    publishedAt: '2026-09-04T14:30:00Z',
+    isRead: false,
+    isSaved: false,
+  },
+  // General Tech
+  {
+    id: 'sample-thoughtful-rss',
     feedId: 'hacker-news',
     title: 'Why a Thoughtful RSS Reader Still Matters',
-    excerpt:
-      'A calm place to read can be more valuable than another algorithmic feed competing for your attention.',
+    excerpt: 'A calm place to read can be more valuable than another algorithmic feed competing for your attention.',
     publishedAt: '2026-09-04T17:00:00Z',
     isRead: true,
     isSaved: true,
   },
+  {
+    id: 'sample-engineering-velocity',
+    feedId: 'pragmatic-engineer',
+    title: 'Engineering Velocity: What Top Tech Teams Measure',
+    excerpt: 'DORA metrics vs developer productivity frameworks: what high-growth engineering organizations track in 2026.',
+    publishedAt: '2026-09-04T09:15:00Z',
+    isRead: false,
+    isSaved: false,
+  },
+  // AI & ML
+  {
+    id: 'sample-effective-rag-systems',
+    feedId: 'simon-willison',
+    title: 'Building Effective RAG Systems: What Actually Works in Production',
+    excerpt: "After months of experimenting with retrieval-augmented generation, here's what I have learned about making systems reliable.",
+    publishedAt: '2026-09-05T06:00:00Z',
+    isRead: false,
+    isSaved: false,
+  },
+  {
+    id: 'sample-open-source-models',
+    feedId: 'hugging-face',
+    title: 'Open Source Models in 2026: From Inference to Fine-Tuning',
+    excerpt: 'Small language models running locally are outperforming previous generation frontier models on targeted coding tasks.',
+    publishedAt: '2026-09-03T18:00:00Z',
+    isRead: false,
+    isSaved: false,
+  },
 ];
 
-const storedLibrary = loadLibrary();
+const hasAuthToken = typeof window !== 'undefined' && Boolean(window.localStorage?.getItem('frontpage_auth_token'));
+const storedLibrary = hasAuthToken ? loadLibrary() : null;
 
 function createInitialReadingActivity() {
-  return articles
+  return sampleArticles
     .filter((article) => article.isRead)
     .reduce((activity, article) => {
       const date = article.publishedAt.slice(0, 10);
-
       activity[date] = (activity[date] ?? 0) + 1;
       return activity;
     }, {});
@@ -144,8 +152,13 @@ function persistLibrary() {
 
 function recordReadingActivity() {
   const today = toDateKey();
-
   state.readingActivity[today] = (state.readingActivity[today] ?? 0) + 1;
+}
+
+export function resetToGuestSampleLibrary() {
+  state.feeds = sampleFeeds.map((f) => ({ ...f }));
+  state.articles = sampleArticles.map((a) => ({ ...a }));
+  state.totalArticlesCount = sampleArticles.length;
 }
 
 export const state = {
@@ -159,8 +172,9 @@ export const state = {
   searchQuery: '',
   currentSearchIntent: null,
   categories,
-  feeds: storedLibrary?.feeds ?? feeds,
-  articles: storedLibrary?.articles ?? articles,
+  feeds: storedLibrary?.feeds ?? sampleFeeds.map((f) => ({ ...f })),
+  articles: storedLibrary?.articles ?? sampleArticles.map((a) => ({ ...a })),
+  totalArticlesCount: storedLibrary?.articles?.length ?? sampleArticles.length,
   readingActivity: storedLibrary?.readingActivity ?? createInitialReadingActivity(),
 };
 
